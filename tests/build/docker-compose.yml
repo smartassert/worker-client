@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  postgres:
+    env_file: .env
+    image: postgres:12.5-alpine
+    container_name: postgres
+    ports:
+      - "5432:5432"
+
+  worker-service:
+    image: ghcr.io/smartassert/worker:4.5
+    container_name: worker-service
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/worker-db?serverVersion=12&charset=utf8
+    depends_on:
+      - postgres
+
+  worker-http:
+    image: caddy:2.4.5-alpine
+    container_name: worker-http
+    restart: unless-stopped
+    ports:
+      - "9080:80"
+    links:
+      - worker-service:app
+    volumes:
+      - ./http-config/caddy/index.php:/app/public/index.php
+      - ./http-config/caddy/Caddyfile:/etc/caddy/Caddyfile
