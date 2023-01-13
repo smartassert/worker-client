@@ -22,8 +22,8 @@
         "static-analysis": "XDEBUG_MODE=off ./vendor/bin/phpstan",
         "test": "XDEBUG_MODE=off ./vendor/bin/phpunit --colors=always tests",
         "worker-setup": [
-            "docker-compose -f ./tests/build/docker-compose.yml exec -T worker php bin/console doctrine:database:create --if-not-exists",
-            "docker-compose -f ./tests/build/docker-compose.yml exec -T worker php bin/console doctrine:schema:update --force --no-interaction"
+            "docker-compose -f ./tests/build/docker-compose.yml exec -T worker-service php bin/console doctrine:database:create --if-not-exists",
+            "docker-compose -f ./tests/build/docker-compose.yml exec -T worker-service php bin/console doctrine:schema:update --force --no-interaction --complete"
         ],
         "integration-up": "docker-compose -f tests/build/docker-compose.yml  up -d",
         "integration-status": "docker-compose -f tests/build/docker-compose.yml ps",
