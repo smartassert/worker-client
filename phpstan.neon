@@ -1,0 +1,16 @@
+parameters:
+  level: 9
+  paths:
+    - src
+    - tests
+  inferPrivatePropertyTypeFromConstructor: true
+  ignoreErrors:
+    -
+      message: "#^Property SmartAssert\\\\WorkerClient\\\\Client\\:\\:\\$baseUrl is never read, only written\\.$#"
+      count: 1
+      path: src/Client.php
+
+    -
+      message: "#^Property SmartAssert\\\\WorkerClient\\\\Client\\:\\:\\$serviceClient is never read, only written\\.$#"
+      count: 1
+      path: src/Client.php
