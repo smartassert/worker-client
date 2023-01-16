@@ -17,7 +17,7 @@ abstract class AbstractIntegrationTest extends TestCase
     public static function setUpBeforeClass(): void
     {
         self::$client = new Client(
-            'http://localhost:9081',
+            'http://localhost:9080',
             self::createServiceClient(),
         );
     }
