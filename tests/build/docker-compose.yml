@@ -9,7 +9,7 @@ services:
       - "5432:5432"
 
   worker-service:
-    image: ghcr.io/smartassert/worker:4.5
+    image: ghcr.io/smartassert/worker:5.0.1
     container_name: worker-service
     environment:
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/worker-db?serverVersion=12&charset=utf8
