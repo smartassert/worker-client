@@ -8,25 +8,30 @@ class DataRepository
 {
     private static ?\PDO $connection = null;
 
-    /**
-     * @var string[]
-     */
-    private readonly array $tableNames;
-
     public function __construct(
         private readonly string $databaseDsn,
     ) {
-        $this->tableNames = [
-            'worker_event',
-            'worker_event_worker_event_reference',
-            'worker_event_reference',
-        ];
     }
 
     public function removeAllData(): void
     {
-        foreach ($this->tableNames as $tableName) {
-            $this->getConnection()->query('DELETE FROM ' . $tableName);
+        $tableNames = [
+            'worker_event',
+            'worker_event_worker_event_reference',
+            'worker_event_reference',
+        ];
+
+        $sequenceNames = [
+            'worker_event_id_seq',
+            'worker_event_reference_id_seq',
+        ];
+
+        foreach ($tableNames as $tableName) {
+            $this->getConnection()->query('TRUNCATE TABLE ' . $tableName . ' CASCADE');
+        }
+
+        foreach ($sequenceNames as $sequenceName) {
+            $this->getConnection()->query('ALTER SEQUENCE ' . $sequenceName . ' RESTART WITH 1');
         }
     }
 

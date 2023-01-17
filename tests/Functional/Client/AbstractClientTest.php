@@ -16,6 +16,8 @@ use SmartAssert\ServiceClient\Client as ServiceClient;
 use SmartAssert\ServiceClient\Exception\InvalidModelDataException;
 use SmartAssert\ServiceClient\Exception\NonSuccessResponseException;
 use SmartAssert\WorkerClient\Client;
+use SmartAssert\WorkerClient\EventFactory;
+use SmartAssert\WorkerClient\ResourceReferenceFactory;
 use SmartAssert\WorkerClient\Tests\Functional\DataProvider\CommonNonSuccessResponseDataProviderTrait;
 use SmartAssert\WorkerClient\Tests\Functional\DataProvider\InvalidJsonResponseExceptionDataProviderTrait;
 use SmartAssert\WorkerClient\Tests\Functional\DataProvider\NetworkErrorExceptionDataProviderTrait;
@@ -45,6 +47,9 @@ abstract class AbstractClientTest extends TestCase
                 $httpFactory,
                 $httpFactory,
                 new HttpClient(['handler' => $handlerStack]),
+            ),
+            new EventFactory(
+                new ResourceReferenceFactory(),
             ),
         );
     }

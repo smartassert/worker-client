@@ -9,6 +9,8 @@ use GuzzleHttp\Psr7\HttpFactory;
 use PHPUnit\Framework\TestCase;
 use SmartAssert\ServiceClient\Client as ServiceClient;
 use SmartAssert\WorkerClient\Client;
+use SmartAssert\WorkerClient\EventFactory;
+use SmartAssert\WorkerClient\ResourceReferenceFactory;
 use SmartAssert\WorkerClient\Tests\Services\DataRepository;
 use SmartAssert\WorkerClient\Tests\Services\WorkerEventFactory;
 
@@ -23,15 +25,21 @@ abstract class AbstractIntegrationTest extends TestCase
         self::$client = new Client(
             'http://localhost:9080',
             self::createServiceClient(),
+            new EventFactory(
+                new ResourceReferenceFactory(),
+            )
         );
 
         self::$dataRepository = new DataRepository(
             'pgsql:host=localhost;port=5432;dbname=worker-db;user=postgres;password=password!'
         );
 
-        self::$dataRepository->removeAllData();
-
         self::$workerEventFactory = new WorkerEventFactory(self::$dataRepository);
+    }
+
+    protected function setUp(): void
+    {
+        self::$dataRepository->removeAllData();
     }
 
     private static function createServiceClient(): ServiceClient

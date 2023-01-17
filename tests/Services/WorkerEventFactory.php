@@ -40,6 +40,8 @@ class WorkerEventFactory
     /**
      * @param array<mixed> $payload
      * @param array<int>   $relatedReferenceIds
+     *
+     * @return positive-int
      */
     public function createWorkerEvent(
         int $referenceId,
@@ -66,6 +68,9 @@ class WorkerEventFactory
         ]);
 
         $workerEventId = (int) $this->dataRepository->getConnection()->lastInsertId();
+        if ($workerEventId < 1) {
+            throw new \RuntimeException('Invalid worker event id: ' . $workerEventId);
+        }
 
         foreach ($relatedReferenceIds as $relatedReferenceId) {
             $this->createWorkerEventReferenceRelation($workerEventId, $relatedReferenceId);
