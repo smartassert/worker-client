@@ -16,6 +16,9 @@ class DataRepository
     public function removeAllData(): void
     {
         $tableNames = [
+            'job',
+            'test',
+            'source',
             'worker_event',
             'worker_event_worker_event_reference',
             'worker_event_reference',

@@ -21,6 +21,13 @@ use SmartAssert\WorkerClient\ResourceReferenceFactory;
 use SmartAssert\WorkerClient\Tests\Functional\DataProvider\CommonNonSuccessResponseDataProviderTrait;
 use SmartAssert\WorkerClient\Tests\Functional\DataProvider\InvalidJsonResponseExceptionDataProviderTrait;
 use SmartAssert\WorkerClient\Tests\Functional\DataProvider\NetworkErrorExceptionDataProviderTrait;
+use SmartAssert\WorkerJobSource\Factory\JobSourceFactory;
+use SmartAssert\WorkerJobSource\Factory\YamlFileFactory;
+use SmartAssert\WorkerJobSource\JobSourceSerializer;
+use SmartAssert\YamlFile\Collection\Serializer;
+use SmartAssert\YamlFile\FileHashes\Serializer as FileHashesSerializer;
+use Symfony\Component\Yaml\Dumper;
+use Symfony\Component\Yaml\Parser;
 
 abstract class AbstractClientTest extends TestCase
 {
@@ -41,6 +48,9 @@ abstract class AbstractClientTest extends TestCase
 
         $handlerStack = HandlerStack::create($this->mockHandler);
 
+        $yamlDumper = new Dumper();
+        $yamlParser = new Parser();
+
         $this->client = new Client(
             'https://worker.example.com',
             new ServiceClient(
@@ -51,6 +61,11 @@ abstract class AbstractClientTest extends TestCase
             new EventFactory(
                 new ResourceReferenceFactory(),
             ),
+            new JobSourceSerializer(
+                new Serializer(new FileHashesSerializer($yamlDumper)),
+                new YamlFileFactory($yamlDumper),
+            ),
+            new JobSourceFactory($yamlDumper, $yamlParser),
         );
     }
 
