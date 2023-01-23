@@ -13,6 +13,13 @@ use SmartAssert\WorkerClient\EventFactory;
 use SmartAssert\WorkerClient\ResourceReferenceFactory;
 use SmartAssert\WorkerClient\Tests\Services\DataRepository;
 use SmartAssert\WorkerClient\Tests\Services\WorkerEventFactory;
+use SmartAssert\WorkerJobSource\Factory\JobSourceFactory;
+use SmartAssert\WorkerJobSource\Factory\YamlFileFactory;
+use SmartAssert\WorkerJobSource\JobSourceSerializer;
+use SmartAssert\YamlFile\Collection\Serializer;
+use SmartAssert\YamlFile\FileHashes\Serializer as FileHashesSerializer;
+use Symfony\Component\Yaml\Dumper;
+use Symfony\Component\Yaml\Parser;
 
 abstract class AbstractIntegrationTest extends TestCase
 {
@@ -22,12 +29,20 @@ abstract class AbstractIntegrationTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
+        $yamlDumper = new Dumper();
+        $yamlParser = new Parser();
+
         self::$client = new Client(
             'http://localhost:9080',
             self::createServiceClient(),
             new EventFactory(
                 new ResourceReferenceFactory(),
-            )
+            ),
+            new JobSourceSerializer(
+                new Serializer(new FileHashesSerializer($yamlDumper)),
+                new YamlFileFactory($yamlDumper),
+            ),
+            new JobSourceFactory($yamlDumper, $yamlParser),
         );
 
         self::$dataRepository = new DataRepository(

@@ -11,9 +11,15 @@ use SmartAssert\ServiceClient\Exception\InvalidModelDataException;
 use SmartAssert\ServiceClient\Exception\InvalidResponseContentException;
 use SmartAssert\ServiceClient\Exception\InvalidResponseDataException;
 use SmartAssert\ServiceClient\Exception\NonSuccessResponseException;
+use SmartAssert\ServiceClient\Payload\UrlEncodedPayload;
 use SmartAssert\ServiceClient\Request;
 use SmartAssert\WorkerClient\Model\ApplicationState;
 use SmartAssert\WorkerClient\Model\Event;
+use SmartAssert\WorkerClient\Model\JobCreationError;
+use SmartAssert\WorkerJobSource\Exception\InvalidManifestException;
+use SmartAssert\WorkerJobSource\Factory\JobSourceFactory;
+use SmartAssert\WorkerJobSource\JobSourceSerializer;
+use SmartAssert\YamlFile\Collection\ProviderInterface;
 
 class Client
 {
@@ -21,6 +27,8 @@ class Client
         private readonly string $baseUrl,
         private readonly ServiceClient $serviceClient,
         private readonly EventFactory $eventFactory,
+        private readonly JobSourceSerializer $jobSourceSerializer,
+        private readonly JobSourceFactory $jobSourceFactory,
     ) {
     }
 
@@ -79,6 +87,51 @@ class Client
     }
 
     /**
+     * @param non-empty-string        $label
+     * @param non-empty-string        $eventDeliveryUrl
+     * @param positive-int            $maximumDurationInSeconds
+     * @param array<non-empty-string> $manifestPaths
+     *
+     * @throws ClientExceptionInterface
+     * @throws InvalidManifestException
+     * @throws InvalidModelDataException
+     * @throws InvalidResponseContentException
+     * @throws InvalidResponseDataException
+     */
+    public function createJob(
+        string $label,
+        string $eventDeliveryUrl,
+        int $maximumDurationInSeconds,
+        array $manifestPaths,
+        ProviderInterface $sources
+    ): ?JobCreationError {
+        $jobSource = $this->jobSourceFactory->createFromManifestPathsAndSources($manifestPaths, $sources);
+        $source = $this->jobSourceSerializer->serialize($jobSource);
+
+        $response = $this->serviceClient->sendRequestForJsonEncodedData(
+            (new Request('POST', $this->createUrl('/job')))
+                ->withPayload(new UrlEncodedPayload([
+                    'label' => $label,
+                    'event_delivery_url' => $eventDeliveryUrl,
+                    'maximum_duration_in_seconds' => $maximumDurationInSeconds,
+                    'source' => $source,
+                ]))
+        );
+
+        if (200 !== $response->getStatusCode()) {
+            $jobCreationError = $this->createJobCreationErrorModel(new ArrayInspector($response->getData()));
+            if (null === $jobCreationError) {
+                throw InvalidModelDataException::fromJsonResponse(JobCreationError::class, $response);
+            }
+
+            return $jobCreationError;
+        }
+
+        // todo: return job model in #16
+        return null;
+    }
+
+    /**
      * @param non-empty-string $path
      *
      * @return non-empty-string
@@ -98,5 +151,13 @@ class Client
         return null === $application || null === $compilation || null === $execution || null === $eventDelivery
             ? null
             : new ApplicationState($application, $compilation, $execution, $eventDelivery);
+    }
+
+    private function createJobCreationErrorModel(ArrayInspector $data): ?JobCreationError
+    {
+        $errorState = $data->getNonEmptyString('error_state');
+        $payload = $data->getArray('payload');
+
+        return null === $errorState ? null : new JobCreationError($errorState, $payload);
     }
 }
