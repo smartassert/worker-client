@@ -15,6 +15,7 @@ use SmartAssert\ServiceClient\Payload\UrlEncodedPayload;
 use SmartAssert\ServiceClient\Request;
 use SmartAssert\WorkerClient\Model\ApplicationState;
 use SmartAssert\WorkerClient\Model\Event;
+use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\JobCreationError;
 use SmartAssert\WorkerJobSource\Exception\InvalidManifestException;
 use SmartAssert\WorkerJobSource\Factory\JobSourceFactory;
@@ -29,6 +30,7 @@ class Client
         private readonly EventFactory $eventFactory,
         private readonly JobSourceSerializer $jobSourceSerializer,
         private readonly JobSourceFactory $jobSourceFactory,
+        private readonly JobFactory $jobFactory,
     ) {
     }
 
@@ -129,6 +131,35 @@ class Client
 
         // todo: return job model in #16
         return null;
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws InvalidModelDataException
+     * @throws InvalidResponseContentException
+     * @throws InvalidResponseDataException
+     * @throws NonSuccessResponseException
+     */
+    public function getJob(): ?Job
+    {
+        $response = $this->serviceClient->sendRequestForJsonEncodedData(
+            new Request('GET', $this->createUrl('/job'))
+        );
+
+        if (200 !== $response->getStatusCode()) {
+            if (400 === $response->getStatusCode()) {
+                return null;
+            }
+
+            throw new NonSuccessResponseException($response->getHttpResponse());
+        }
+
+        $job = $this->jobFactory->create(new ArrayInspector($response->getData()));
+        if (null === $job) {
+            throw InvalidModelDataException::fromJsonResponse(Job::class, $response);
+        }
+
+        return $job;
     }
 
     /**

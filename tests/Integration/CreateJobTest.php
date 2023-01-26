@@ -57,15 +57,4 @@ class CreateJobTest extends AbstractIntegrationTest
             $this->makeCreateJobCall($jobCreationProperties)
         );
     }
-
-    private function makeCreateJobCall(JobCreationProperties $jobCreationProperties): ?JobCreationError
-    {
-        return self::$client->createJob(
-            $jobCreationProperties->label,
-            $jobCreationProperties->eventDeliveryUrl,
-            $jobCreationProperties->maximumDurationInSeconds,
-            $jobCreationProperties->manifestPaths,
-            $jobCreationProperties->sources,
-        );
-    }
 }

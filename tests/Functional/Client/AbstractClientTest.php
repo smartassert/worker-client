@@ -17,7 +17,9 @@ use SmartAssert\ServiceClient\Exception\InvalidModelDataException;
 use SmartAssert\ServiceClient\Exception\NonSuccessResponseException;
 use SmartAssert\WorkerClient\Client;
 use SmartAssert\WorkerClient\EventFactory;
+use SmartAssert\WorkerClient\JobFactory;
 use SmartAssert\WorkerClient\ResourceReferenceFactory;
+use SmartAssert\WorkerClient\TestFactory;
 use SmartAssert\WorkerClient\Tests\Functional\DataProvider\CommonNonSuccessResponseDataProviderTrait;
 use SmartAssert\WorkerClient\Tests\Functional\DataProvider\InvalidJsonResponseExceptionDataProviderTrait;
 use SmartAssert\WorkerClient\Tests\Functional\DataProvider\NetworkErrorExceptionDataProviderTrait;
@@ -66,6 +68,10 @@ abstract class AbstractClientTest extends TestCase
                 new YamlFileFactory($yamlDumper),
             ),
             new JobSourceFactory($yamlDumper, $yamlParser),
+            new JobFactory(
+                new ResourceReferenceFactory(),
+                new TestFactory(),
+            )
         );
     }
 
