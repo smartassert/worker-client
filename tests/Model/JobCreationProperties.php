@@ -10,53 +10,59 @@ use SmartAssert\YamlFile\Collection\ProviderInterface;
 class JobCreationProperties
 {
     /**
+     * @var non-empty-string
+     */
+    public readonly string $label;
+
+    /**
+     * @var non-empty-string
+     */
+    public readonly string $eventDeliveryUrl;
+
+    /**
+     * @var positive-int
+     */
+    public readonly int $maximumDurationInSeconds;
+
+    /**
+     * @var non-empty-string[]
+     */
+    public readonly array $manifestPaths;
+    public readonly ProviderInterface $sources;
+
+    /**
      * @param non-empty-string   $label
      * @param non-empty-string   $eventDeliveryUrl
      * @param positive-int       $maximumDurationInSeconds
      * @param non-empty-string[] $manifestPaths
      */
     public function __construct(
-        public readonly string $label,
-        public readonly string $eventDeliveryUrl,
-        public readonly int $maximumDurationInSeconds,
-        public readonly array $manifestPaths,
-        public readonly ProviderInterface $sources,
+        ?string $label = null,
+        ?string $eventDeliveryUrl = null,
+        ?int $maximumDurationInSeconds = null,
+        array $manifestPaths = [],
+        ?ProviderInterface $sources = null,
     ) {
-    }
+        if (null === $label) {
+            $label = md5((string) rand());
+        }
 
-    public static function create(): JobCreationProperties
-    {
-        return new JobCreationProperties(
-            md5((string) rand()),
-            'https://example.com:' . rand(8000, 9000) . '/event_delivery_url',
-            rand(1, 600),
-            [],
-            new ArrayCollection([])
-        );
-    }
+        if (null === $eventDeliveryUrl) {
+            $eventDeliveryUrl = 'https://example.com:' . rand(8000, 9000) . '/event_delivery_url';
+        }
 
-    /**
-     * @param non-empty-string[] $manifestPaths
-     */
-    public function withManifestPaths(array $manifestPaths): JobCreationProperties
-    {
-        return new JobCreationProperties(
-            $this->label,
-            $this->eventDeliveryUrl,
-            $this->maximumDurationInSeconds,
-            $manifestPaths,
-            $this->sources,
-        );
-    }
+        if (null === $maximumDurationInSeconds) {
+            $maximumDurationInSeconds = rand(1, 600);
+        }
 
-    public function withSources(ProviderInterface $sources): JobCreationProperties
-    {
-        return new JobCreationProperties(
-            $this->label,
-            $this->eventDeliveryUrl,
-            $this->maximumDurationInSeconds,
-            $this->manifestPaths,
-            $sources,
-        );
+        if (null === $sources) {
+            $sources = new ArrayCollection([]);
+        }
+
+        $this->label = $label;
+        $this->eventDeliveryUrl = $eventDeliveryUrl;
+        $this->maximumDurationInSeconds = $maximumDurationInSeconds;
+        $this->manifestPaths = $manifestPaths;
+        $this->sources = $sources;
     }
 }

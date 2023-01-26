@@ -16,15 +16,15 @@ class CreateJobTest extends AbstractIntegrationTest
     {
         self::expectExceptionObject(InvalidManifestException::createForEmptyContent());
 
-        $this->makeCreateJobCall(JobCreationProperties::create());
+        $this->makeCreateJobCall(new JobCreationProperties());
     }
 
     public function testCreateJobSourceTestMissing(): void
     {
-        $jobCreationProperties = JobCreationProperties::create()
-            ->withManifestPaths(['test1.yml', 'test2.yml'])
-            ->withSources(new ArrayCollection([YamlFile::create('/test1.yml', 'file content')]))
-        ;
+        $jobCreationProperties = new JobCreationProperties(
+            manifestPaths: ['test1.yml', 'test2.yml'],
+            sources: new ArrayCollection([YamlFile::create('/test1.yml', 'file content')])
+        );
 
         self::assertEquals(
             new JobCreationError('source/test/missing', ['path' => 'test2.yml']),
@@ -34,10 +34,10 @@ class CreateJobTest extends AbstractIntegrationTest
 
     public function testCreateJobJobAlreadyExists(): void
     {
-        $jobCreationProperties = JobCreationProperties::create()
-            ->withManifestPaths(['test1.yml'])
-            ->withSources(new ArrayCollection([YamlFile::create('/test1.yml', 'file content')]))
-        ;
+        $jobCreationProperties = new JobCreationProperties(
+            manifestPaths: ['test1.yml'],
+            sources: new ArrayCollection([YamlFile::create('/test1.yml', 'file content')])
+        );
 
         $this->makeCreateJobCall($jobCreationProperties);
         self::assertEquals(
@@ -48,10 +48,10 @@ class CreateJobTest extends AbstractIntegrationTest
 
     public function testCreateJobSuccess(): void
     {
-        $jobCreationProperties = JobCreationProperties::create()
-            ->withManifestPaths(['test1.yml'])
-            ->withSources(new ArrayCollection([YamlFile::create('/test1.yml', 'file content')]))
-        ;
+        $jobCreationProperties = new JobCreationProperties(
+            manifestPaths: ['test1.yml'],
+            sources: new ArrayCollection([YamlFile::create('/test1.yml', 'file content')])
+        );
 
         self::assertNull(
             $this->makeCreateJobCall($jobCreationProperties)
