@@ -83,7 +83,7 @@ class Client
             throw InvalidModelDataException::fromJsonResponse(Event::class, $response);
         }
 
-        return $this->eventFactory->create(new ArrayInspector($response->getData()));
+        return $event;
     }
 
     /**
