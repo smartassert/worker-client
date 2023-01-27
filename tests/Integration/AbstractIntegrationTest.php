@@ -6,6 +6,7 @@ namespace SmartAssert\WorkerClient\Tests\Integration;
 
 use PHPUnit\Framework\TestCase;
 use SmartAssert\WorkerClient\Client;
+use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\JobCreationError;
 use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
 use SmartAssert\WorkerClient\Tests\Services\ClientFactory;
