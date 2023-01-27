@@ -99,6 +99,7 @@ class Client
      * @throws InvalidModelDataException
      * @throws InvalidResponseContentException
      * @throws InvalidResponseDataException
+     * @throws NonSuccessResponseException
      */
     public function createJob(
         string $label,
@@ -106,7 +107,7 @@ class Client
         int $maximumDurationInSeconds,
         array $manifestPaths,
         ProviderInterface $sources
-    ): ?JobCreationError {
+    ): JobCreationError|Job {
         $jobSource = $this->jobSourceFactory->createFromManifestPathsAndSources($manifestPaths, $sources);
         $source = $this->jobSourceSerializer->serialize($jobSource);
 
@@ -120,7 +121,7 @@ class Client
                 ]))
         );
 
-        if (200 !== $response->getStatusCode()) {
+        if (400 === $response->getStatusCode()) {
             $jobCreationError = $this->createJobCreationErrorModel(new ArrayInspector($response->getData()));
             if (null === $jobCreationError) {
                 throw InvalidModelDataException::fromJsonResponse(JobCreationError::class, $response);
@@ -129,8 +130,16 @@ class Client
             return $jobCreationError;
         }
 
-        // todo: return job model in #16
-        return null;
+        if (200 !== $response->getStatusCode()) {
+            throw new NonSuccessResponseException($response->getHttpResponse());
+        }
+
+        $job = $this->jobFactory->create(new ArrayInspector($response->getData()));
+        if (null === $job) {
+            throw InvalidModelDataException::fromJsonResponse(Job::class, $response);
+        }
+
+        return $job;
     }
 
     /**

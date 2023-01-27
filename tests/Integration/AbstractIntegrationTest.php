@@ -11,6 +11,7 @@ use SmartAssert\ServiceClient\Client as ServiceClient;
 use SmartAssert\WorkerClient\Client;
 use SmartAssert\WorkerClient\EventFactory;
 use SmartAssert\WorkerClient\JobFactory;
+use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\JobCreationError;
 use SmartAssert\WorkerClient\ResourceReferenceFactory;
 use SmartAssert\WorkerClient\TestFactory as TestModelFactory;
@@ -68,7 +69,7 @@ abstract class AbstractIntegrationTest extends TestCase
         self::$dataRepository->removeAllData();
     }
 
-    protected function makeCreateJobCall(JobCreationProperties $jobCreationProperties): ?JobCreationError
+    protected function makeCreateJobCall(JobCreationProperties $jobCreationProperties): JobCreationError|Job
     {
         return self::$client->createJob(
             $jobCreationProperties->label,
