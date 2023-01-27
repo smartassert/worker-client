@@ -4,28 +4,15 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Tests\Integration;
 
-use GuzzleHttp\Client as HttpClient;
-use GuzzleHttp\Psr7\HttpFactory;
 use PHPUnit\Framework\TestCase;
-use SmartAssert\ServiceClient\Client as ServiceClient;
 use SmartAssert\WorkerClient\Client;
-use SmartAssert\WorkerClient\EventFactory;
-use SmartAssert\WorkerClient\JobFactory;
 use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\JobCreationError;
-use SmartAssert\WorkerClient\ResourceReferenceFactory;
-use SmartAssert\WorkerClient\TestFactory as TestModelFactory;
 use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
+use SmartAssert\WorkerClient\Tests\Services\ClientFactory;
 use SmartAssert\WorkerClient\Tests\Services\DataRepository;
 use SmartAssert\WorkerClient\Tests\Services\TestFactory;
 use SmartAssert\WorkerClient\Tests\Services\WorkerEventFactory;
-use SmartAssert\WorkerJobSource\Factory\JobSourceFactory;
-use SmartAssert\WorkerJobSource\Factory\YamlFileFactory;
-use SmartAssert\WorkerJobSource\JobSourceSerializer;
-use SmartAssert\YamlFile\Collection\Serializer;
-use SmartAssert\YamlFile\FileHashes\Serializer as FileHashesSerializer;
-use Symfony\Component\Yaml\Dumper;
-use Symfony\Component\Yaml\Parser;
 
 abstract class AbstractIntegrationTest extends TestCase
 {
@@ -36,25 +23,7 @@ abstract class AbstractIntegrationTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        $yamlDumper = new Dumper();
-        $yamlParser = new Parser();
-
-        $resourceReferenceFactory = new ResourceReferenceFactory();
-
-        self::$client = new Client(
-            'http://localhost:9080',
-            self::createServiceClient(),
-            new EventFactory($resourceReferenceFactory),
-            new JobSourceSerializer(
-                new Serializer(new FileHashesSerializer($yamlDumper)),
-                new YamlFileFactory($yamlDumper),
-            ),
-            new JobSourceFactory($yamlDumper, $yamlParser),
-            new JobFactory(
-                $resourceReferenceFactory,
-                new TestModelFactory(),
-            ),
-        );
+        self::$client = ClientFactory::create('http://localhost:9080');
 
         self::$dataRepository = new DataRepository(
             'pgsql:host=localhost;port=5432;dbname=worker-db;user=postgres;password=password!'
@@ -78,12 +47,5 @@ abstract class AbstractIntegrationTest extends TestCase
             $jobCreationProperties->manifestPaths,
             $jobCreationProperties->sources,
         );
-    }
-
-    private static function createServiceClient(): ServiceClient
-    {
-        $httpFactory = new HttpFactory();
-
-        return new ServiceClient($httpFactory, $httpFactory, new HttpClient());
     }
 }

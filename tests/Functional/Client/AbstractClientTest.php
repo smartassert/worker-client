@@ -4,32 +4,19 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Tests\Functional\Client;
 
-use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\HttpFactory;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
-use SmartAssert\ServiceClient\Client as ServiceClient;
 use SmartAssert\ServiceClient\Exception\InvalidModelDataException;
 use SmartAssert\ServiceClient\Exception\NonSuccessResponseException;
 use SmartAssert\WorkerClient\Client;
-use SmartAssert\WorkerClient\EventFactory;
-use SmartAssert\WorkerClient\JobFactory;
-use SmartAssert\WorkerClient\ResourceReferenceFactory;
-use SmartAssert\WorkerClient\TestFactory;
 use SmartAssert\WorkerClient\Tests\Functional\DataProvider\CommonNonSuccessResponseDataProviderTrait;
 use SmartAssert\WorkerClient\Tests\Functional\DataProvider\InvalidJsonResponseExceptionDataProviderTrait;
 use SmartAssert\WorkerClient\Tests\Functional\DataProvider\NetworkErrorExceptionDataProviderTrait;
-use SmartAssert\WorkerJobSource\Factory\JobSourceFactory;
-use SmartAssert\WorkerJobSource\Factory\YamlFileFactory;
-use SmartAssert\WorkerJobSource\JobSourceSerializer;
-use SmartAssert\YamlFile\Collection\Serializer;
-use SmartAssert\YamlFile\FileHashes\Serializer as FileHashesSerializer;
-use Symfony\Component\Yaml\Dumper;
-use Symfony\Component\Yaml\Parser;
+use SmartAssert\WorkerClient\Tests\Services\ClientFactory;
 
 abstract class AbstractClientTest extends TestCase
 {
@@ -45,34 +32,8 @@ abstract class AbstractClientTest extends TestCase
         parent::setUp();
 
         $this->mockHandler = new MockHandler();
-
-        $httpFactory = new HttpFactory();
-
         $handlerStack = HandlerStack::create($this->mockHandler);
-
-        $yamlDumper = new Dumper();
-        $yamlParser = new Parser();
-
-        $this->client = new Client(
-            'https://worker.example.com',
-            new ServiceClient(
-                $httpFactory,
-                $httpFactory,
-                new HttpClient(['handler' => $handlerStack]),
-            ),
-            new EventFactory(
-                new ResourceReferenceFactory(),
-            ),
-            new JobSourceSerializer(
-                new Serializer(new FileHashesSerializer($yamlDumper)),
-                new YamlFileFactory($yamlDumper),
-            ),
-            new JobSourceFactory($yamlDumper, $yamlParser),
-            new JobFactory(
-                new ResourceReferenceFactory(),
-                new TestFactory(),
-            )
-        );
+        $this->client = ClientFactory::create('https://worker.example.com', ['handler' => $handlerStack]);
     }
 
     /**
