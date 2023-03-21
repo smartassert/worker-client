@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace SmartAssert\WorkerClient\Tests\Functional\DataProvider;
 
 use GuzzleHttp\Psr7\Response;
-use SmartAssert\ServiceClient\Exception\InvalidResponseContentException;
 use SmartAssert\ServiceClient\Exception\InvalidResponseDataException;
+use SmartAssert\ServiceClient\Exception\InvalidResponseTypeException;
 
 trait InvalidJsonResponseExceptionDataProviderTrait
 {
@@ -18,7 +18,7 @@ trait InvalidJsonResponseExceptionDataProviderTrait
         return [
             'invalid response content type' => [
                 'httpFixture' => new Response(200, ['content-type' => 'text/plain']),
-                'expectedExceptionClass' => InvalidResponseContentException::class,
+                'expectedExceptionClass' => InvalidResponseTypeException::class,
             ],
             'invalid response data' => [
                 'httpFixture' => new Response(200, ['content-type' => 'application/json'], '1'),
