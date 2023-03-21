@@ -54,8 +54,8 @@
         "psr/http-factory": "^1.0",
         "smartassert/service-client": ">=4.0,<5",
         "smartassert/array-inspector": ">=0.4,<1",
-        "smartassert/yaml-file": "^4.0",
-        "smartassert/worker-job-source": "^0.1.0"
+        "smartassert/yaml-file": "^5.0",
+        "smartassert/worker-job-source": "^0.2.0"
     },
     "require-dev": {
         "ext-pdo": "*",
