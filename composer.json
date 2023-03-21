@@ -54,8 +54,7 @@
         "psr/http-factory": "^1.0",
         "smartassert/service-client": ">=4.0,<5",
         "smartassert/array-inspector": ">=0.4,<1",
-        "smartassert/yaml-file": "^5.0",
-        "smartassert/worker-job-source": "^0.2.0"
+        "smartassert/yaml-file": "^5.0"
     },
     "require-dev": {
         "ext-pdo": "*",
@@ -64,7 +63,8 @@
         "phpstan/phpstan": "^1.9",
         "guzzlehttp/guzzle": "^7.5",
         "phpstan/extension-installer": "^1.2",
-        "phpstan/phpstan-phpunit": "^1.3"
+        "phpstan/phpstan-phpunit": "^1.3",
+        "smartassert/worker-job-source": "^0.2.0"
     },
     "minimum-stability":"stable",
     "prefer-stable":true,
