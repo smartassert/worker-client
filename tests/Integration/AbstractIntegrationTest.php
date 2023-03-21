@@ -13,6 +13,13 @@ use SmartAssert\WorkerClient\Tests\Services\ClientFactory;
 use SmartAssert\WorkerClient\Tests\Services\DataRepository;
 use SmartAssert\WorkerClient\Tests\Services\TestFactory;
 use SmartAssert\WorkerClient\Tests\Services\WorkerEventFactory;
+use SmartAssert\WorkerJobSource\Factory\YamlFileFactory;
+use SmartAssert\WorkerJobSource\JobSourceSerializer;
+use SmartAssert\WorkerJobSource\Model\JobSource;
+use SmartAssert\WorkerJobSource\Model\Manifest;
+use SmartAssert\YamlFile\Collection\Serializer as YamlFileCollectionSerializer;
+use SmartAssert\YamlFile\FileHashes\Serializer as FileHashesSerializer;
+use Symfony\Component\Yaml\Dumper;
 
 abstract class AbstractIntegrationTest extends TestCase
 {
@@ -40,12 +47,29 @@ abstract class AbstractIntegrationTest extends TestCase
 
     protected function makeCreateJobCall(JobCreationProperties $jobCreationProperties): JobCreationError|Job
     {
+        $jobSource = new JobSource(
+            new Manifest($jobCreationProperties->manifestPaths),
+            $jobCreationProperties->sources
+        );
+
+        $yamlDumper = new Dumper();
+
+        $fileHashesSerializer = new FileHashesSerializer($yamlDumper);
+        $yamlFileCollectionSerializer = new YamlFileCollectionSerializer($fileHashesSerializer);
+        $yamlFileFactory = new YamlFileFactory($yamlDumper);
+
+        $jobSourceSerializer = new JobSourceSerializer(
+            $yamlFileCollectionSerializer,
+            $yamlFileFactory
+        );
+
+        $serializedSource = $jobSourceSerializer->serialize($jobSource);
+
         return self::$client->createJob(
             $jobCreationProperties->label,
             $jobCreationProperties->eventDeliveryUrl,
             $jobCreationProperties->maximumDurationInSeconds,
-            $jobCreationProperties->manifestPaths,
-            $jobCreationProperties->sources,
+            $serializedSource,
         );
     }
 }

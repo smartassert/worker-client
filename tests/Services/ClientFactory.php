@@ -13,13 +13,6 @@ use SmartAssert\WorkerClient\EventFactory;
 use SmartAssert\WorkerClient\JobFactory;
 use SmartAssert\WorkerClient\ResourceReferenceFactory;
 use SmartAssert\WorkerClient\TestFactory;
-use SmartAssert\WorkerJobSource\Factory\JobSourceFactory;
-use SmartAssert\WorkerJobSource\Factory\YamlFileFactory;
-use SmartAssert\WorkerJobSource\JobSourceSerializer;
-use SmartAssert\YamlFile\Collection\Serializer;
-use SmartAssert\YamlFile\FileHashes\Serializer as FileHashesSerializer;
-use Symfony\Component\Yaml\Dumper;
-use Symfony\Component\Yaml\Parser;
 
 class ClientFactory
 {
@@ -30,8 +23,6 @@ class ClientFactory
     public static function create(string $baseUrl, array $httpClientConfig = []): Client
     {
         $httpFactory = new HttpFactory();
-        $yamlDumper = new Dumper();
-        $yamlParser = new Parser();
 
         return new Client(
             $baseUrl,
@@ -44,11 +35,6 @@ class ClientFactory
             new EventFactory(
                 new ResourceReferenceFactory(),
             ),
-            new JobSourceSerializer(
-                new Serializer(new FileHashesSerializer($yamlDumper)),
-                new YamlFileFactory($yamlDumper),
-            ),
-            new JobSourceFactory($yamlDumper, $yamlParser),
             new JobFactory(
                 new ResourceReferenceFactory(),
                 new TestFactory(),

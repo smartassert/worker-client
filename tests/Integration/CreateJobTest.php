@@ -8,19 +8,11 @@ use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\JobCreationError;
 use SmartAssert\WorkerClient\Model\ResourceReference;
 use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
-use SmartAssert\WorkerJobSource\Exception\InvalidManifestException;
 use SmartAssert\YamlFile\Collection\ArrayCollection;
 use SmartAssert\YamlFile\YamlFile;
 
 class CreateJobTest extends AbstractIntegrationTest
 {
-    public function testCreateManifestEmpty(): void
-    {
-        self::expectExceptionObject(InvalidManifestException::createForEmptyContent());
-
-        $this->makeCreateJobCall(new JobCreationProperties());
-    }
-
     public function testCreateJobSourceTestMissing(): void
     {
         $jobCreationProperties = new JobCreationProperties(
