@@ -7,7 +7,7 @@ namespace SmartAssert\WorkerClient\Tests\Integration;
 use PHPUnit\Framework\TestCase;
 use SmartAssert\WorkerClient\Client;
 use SmartAssert\WorkerClient\Model\Job;
-use SmartAssert\WorkerClient\Model\JobCreationError;
+use SmartAssert\WorkerClient\Model\JobCreationException;
 use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
 use SmartAssert\WorkerClient\Tests\Services\ClientFactory;
 use SmartAssert\WorkerClient\Tests\Services\DataRepository;
@@ -45,7 +45,10 @@ abstract class AbstractIntegrationTest extends TestCase
         self::$dataRepository->removeAllData();
     }
 
-    protected function makeCreateJobCall(JobCreationProperties $jobCreationProperties): JobCreationError|Job
+    /**
+     * @throws JobCreationException
+     */
+    protected function makeCreateJobCall(JobCreationProperties $jobCreationProperties): JobCreationException|Job
     {
         $jobSource = new JobSource(
             new Manifest($jobCreationProperties->manifestPaths),
