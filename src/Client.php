@@ -17,7 +17,7 @@ use SmartAssert\ServiceClient\Response\JsonResponse;
 use SmartAssert\WorkerClient\Model\ApplicationState;
 use SmartAssert\WorkerClient\Model\Event;
 use SmartAssert\WorkerClient\Model\Job;
-use SmartAssert\WorkerClient\Model\JobCreationError;
+use SmartAssert\WorkerClient\Model\JobCreationException;
 
 class Client
 {
@@ -101,13 +101,14 @@ class Client
      * @throws InvalidResponseDataException
      * @throws NonSuccessResponseException
      * @throws InvalidResponseTypeException
+     * @throws JobCreationException
      */
     public function createJob(
         string $label,
         string $eventDeliveryUrl,
         int $maximumDurationInSeconds,
         string $serializedJobSource
-    ): JobCreationError|Job {
+    ): Job {
         $response = $this->serviceClient->sendRequest(
             (new Request('POST', $this->createUrl('/job')))
                 ->withPayload(new UrlEncodedPayload([
@@ -125,10 +126,10 @@ class Client
 
             $jobCreationError = $this->createJobCreationErrorModel(new ArrayInspector($response->getData()));
             if (null === $jobCreationError) {
-                throw InvalidModelDataException::fromJsonResponse(JobCreationError::class, $response);
+                throw InvalidModelDataException::fromJsonResponse(JobCreationException::class, $response);
             }
 
-            return $jobCreationError;
+            throw $jobCreationError;
         }
 
         if (200 !== $response->getStatusCode()) {
@@ -202,11 +203,11 @@ class Client
             : new ApplicationState($application, $compilation, $execution, $eventDelivery);
     }
 
-    private function createJobCreationErrorModel(ArrayInspector $data): ?JobCreationError
+    private function createJobCreationErrorModel(ArrayInspector $data): ?JobCreationException
     {
         $errorState = $data->getNonEmptyString('error_state');
         $payload = $data->getArray('payload');
 
-        return null === $errorState ? null : new JobCreationError($errorState, $payload);
+        return null === $errorState ? null : new JobCreationException($errorState, $payload);
     }
 }

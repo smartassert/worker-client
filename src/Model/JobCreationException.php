@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Model;
 
-class JobCreationError
+class JobCreationException extends \Exception
 {
     /**
      * @param non-empty-string $errorState
@@ -14,5 +14,6 @@ class JobCreationError
         public readonly string $errorState,
         public readonly array $payload,
     ) {
+        parent::__construct($this->errorState);
     }
 }

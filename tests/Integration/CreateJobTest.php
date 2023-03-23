@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace SmartAssert\WorkerClient\Tests\Integration;
 
 use SmartAssert\WorkerClient\Model\Job;
-use SmartAssert\WorkerClient\Model\JobCreationError;
+use SmartAssert\WorkerClient\Model\JobCreationException;
 use SmartAssert\WorkerClient\Model\ResourceReference;
 use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
 use SmartAssert\YamlFile\Collection\ArrayCollection;
@@ -20,10 +20,14 @@ class CreateJobTest extends AbstractIntegrationTest
             sources: new ArrayCollection([YamlFile::create('/test1.yml', 'file content')])
         );
 
-        self::assertEquals(
-            new JobCreationError('source/test/missing', ['path' => 'test2.yml']),
-            $this->makeCreateJobCall($jobCreationProperties)
-        );
+        try {
+            $this->makeCreateJobCall($jobCreationProperties);
+        } catch (JobCreationException $e) {
+            self::assertEquals(
+                new JobCreationException('source/test/missing', ['path' => 'test2.yml']),
+                $e
+            );
+        }
     }
 
     public function testCreateJobJobAlreadyExists(): void
@@ -33,11 +37,15 @@ class CreateJobTest extends AbstractIntegrationTest
             sources: new ArrayCollection([YamlFile::create('/test1.yml', 'file content')])
         );
 
-        $this->makeCreateJobCall($jobCreationProperties);
-        self::assertEquals(
-            new JobCreationError('job/already_exists', []),
-            $this->makeCreateJobCall($jobCreationProperties),
-        );
+        try {
+            $this->makeCreateJobCall($jobCreationProperties);
+            $this->makeCreateJobCall($jobCreationProperties);
+        } catch (JobCreationException $e) {
+            self::assertEquals(
+                new JobCreationException('job/already_exists', []),
+                $e
+            );
+        }
     }
 
     /**
