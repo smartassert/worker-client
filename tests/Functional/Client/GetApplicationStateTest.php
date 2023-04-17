@@ -7,7 +7,7 @@ namespace SmartAssert\WorkerClient\Tests\Functional\Client;
 use GuzzleHttp\Psr7\Response;
 use SmartAssert\WorkerClient\Model\ApplicationState;
 
-class GetApplicationStateTest extends AbstractClientTest
+class GetApplicationStateTest extends AbstractClientTestCase
 {
     /**
      * @dataProvider getApplicationStateDataProvider

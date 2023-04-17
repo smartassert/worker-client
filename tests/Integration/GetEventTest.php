@@ -19,7 +19,7 @@ use SmartAssert\WorkerClient\Model\ResourceReference;
  *     payload: array<mixed>
  * }
  */
-class GetEventTest extends AbstractIntegrationTest
+class GetEventTest extends AbstractIntegrationTestCase
 {
     /**
      * @dataProvider getEventDataProvider

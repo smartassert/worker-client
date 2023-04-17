@@ -32,7 +32,7 @@ use SmartAssert\YamlFile\FileHashes\Serializer as FileHashesSerializer;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Yaml\Dumper;
 
-abstract class AbstractIntegrationTest extends TestCase
+abstract class AbstractIntegrationTestCase extends TestCase
 {
     protected static Client $client;
     protected static DataRepository $dataRepository;
