@@ -16,14 +16,8 @@ use SmartAssert\TestAuthenticationProviderBundle\ApiTokenProvider;
 use SmartAssert\TestAuthenticationProviderBundle\FrontendTokenProvider;
 use SmartAssert\UsersClient\Client as UsersClient;
 use SmartAssert\WorkerClient\Client;
-use SmartAssert\WorkerClient\Model\Job;
-use SmartAssert\WorkerClient\Model\JobCreationException;
-use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
 use SmartAssert\WorkerClient\Tests\Services\ClientFactory;
 use SmartAssert\WorkerClient\Tests\Services\DataRepository;
-use SmartAssert\WorkerClient\Tests\Services\JobSourceSerializerFactory;
-use SmartAssert\WorkerJobSource\Model\JobSource;
-use SmartAssert\WorkerJobSource\Model\Manifest;
 use Symfony\Component\Uid\Ulid;
 
 abstract class AbstractIntegrationTestCase extends TestCase
@@ -55,28 +49,6 @@ abstract class AbstractIntegrationTestCase extends TestCase
     protected function setUp(): void
     {
         self::$dataRepository->removeAllData();
-    }
-
-    /**
-     * @throws JobCreationException
-     */
-    protected function makeCreateJobCall(JobCreationProperties $jobCreationProperties): JobCreationException|Job
-    {
-        $jobSource = new JobSource(
-            new Manifest($jobCreationProperties->manifestPaths),
-            $jobCreationProperties->sources
-        );
-
-        $jobSourceSerializer = (new JobSourceSerializerFactory())->create();
-
-        $serializedSource = $jobSourceSerializer->serialize($jobSource);
-
-        return self::$client->createJob(
-            $jobCreationProperties->resultsJob->label,
-            $jobCreationProperties->resultsJob->token,
-            $jobCreationProperties->maximumDurationInSeconds,
-            $serializedSource,
-        );
     }
 
     protected static function getResultsClient(): ResultsClient

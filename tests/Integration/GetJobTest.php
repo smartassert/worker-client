@@ -9,12 +9,14 @@ use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\ResourceReference;
 use SmartAssert\WorkerClient\Model\Test;
 use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
+use SmartAssert\WorkerClient\Tests\Services\JobFactory;
 use SmartAssert\WorkerClient\Tests\Services\TestFactory;
 use SmartAssert\YamlFile\Collection\ArrayCollection;
 use SmartAssert\YamlFile\YamlFile;
 
 class GetJobTest extends AbstractIntegrationTestCase
 {
+    private static JobFactory $jobFactory;
     private static TestFactory $testFactory;
     private static ResultsJob $resultsJob;
 
@@ -22,6 +24,7 @@ class GetJobTest extends AbstractIntegrationTestCase
     {
         parent::setUpBeforeClass();
 
+        self::$jobFactory = new JobFactory(self::$client);
         self::$testFactory = new TestFactory(self::$dataRepository);
         self::$resultsJob = self::getResultsClient()->createJob(self::getApiToken(), self::getJobLabel());
     }
@@ -45,7 +48,7 @@ class GetJobTest extends AbstractIntegrationTestCase
     ): void {
         $jobCreationProperties = $jobCreationPropertiesCreator(self::$resultsJob);
 
-        $this->makeCreateJobCall($jobCreationProperties);
+        self::$jobFactory->create($jobCreationProperties);
 
         foreach ($tests as $test) {
             self::$testFactory->createFromModel($test);
