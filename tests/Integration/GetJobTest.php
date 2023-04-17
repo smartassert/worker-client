@@ -156,13 +156,4 @@ class GetJobTest extends AbstractIntegrationTest
             ],
         ];
     }
-
-    /**
-     * @param non-empty-string   $label
-     * @param non-empty-string[] $components
-     */
-    private function createResourceReference(string $label, array $components): ResourceReference
-    {
-        return new ResourceReference($label, md5(implode('', $components)));
-    }
 }
