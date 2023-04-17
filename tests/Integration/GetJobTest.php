@@ -9,18 +9,34 @@ use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\ResourceReference;
 use SmartAssert\WorkerClient\Model\Test;
 use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
+use SmartAssert\WorkerClient\Tests\Services\ApiTokenFactory;
+use SmartAssert\WorkerClient\Tests\Services\JobFactory;
+use SmartAssert\WorkerClient\Tests\Services\JobLabelFactory;
+use SmartAssert\WorkerClient\Tests\Services\ResultsClientFactory;
+use SmartAssert\WorkerClient\Tests\Services\ServiceClientFactory;
+use SmartAssert\WorkerClient\Tests\Services\TestFactory;
 use SmartAssert\YamlFile\Collection\ArrayCollection;
 use SmartAssert\YamlFile\YamlFile;
 
 class GetJobTest extends AbstractIntegrationTestCase
 {
+    private static JobFactory $jobFactory;
+    private static TestFactory $testFactory;
     private static ResultsJob $resultsJob;
 
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
-        self::$resultsJob = self::getResultsClient()->createJob(self::getApiToken(), self::getJobLabel());
+        self::$jobFactory = new JobFactory(self::$client);
+        self::$testFactory = new TestFactory(self::$dataRepository);
+
+        $serviceClient = (new ServiceClientFactory())->create();
+        $resultsClient = (new ResultsClientFactory($serviceClient))->create();
+        $apiTokenFactory = new ApiTokenFactory($serviceClient);
+        $jobLabelFactory = new JobLabelFactory();
+
+        self::$resultsJob = $resultsClient->createJob($apiTokenFactory->create(), $jobLabelFactory->create());
     }
 
     public function testGetJobJobNotFound(): void
@@ -42,7 +58,7 @@ class GetJobTest extends AbstractIntegrationTestCase
     ): void {
         $jobCreationProperties = $jobCreationPropertiesCreator(self::$resultsJob);
 
-        $this->makeCreateJobCall($jobCreationProperties);
+        self::$jobFactory->create($jobCreationProperties);
 
         foreach ($tests as $test) {
             self::$testFactory->createFromModel($test);

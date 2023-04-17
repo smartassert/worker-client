@@ -9,18 +9,31 @@ use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\JobCreationException;
 use SmartAssert\WorkerClient\Model\ResourceReference;
 use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
+use SmartAssert\WorkerClient\Tests\Services\ApiTokenFactory;
+use SmartAssert\WorkerClient\Tests\Services\JobFactory;
+use SmartAssert\WorkerClient\Tests\Services\JobLabelFactory;
+use SmartAssert\WorkerClient\Tests\Services\ResultsClientFactory;
+use SmartAssert\WorkerClient\Tests\Services\ServiceClientFactory;
 use SmartAssert\YamlFile\Collection\ArrayCollection;
 use SmartAssert\YamlFile\YamlFile;
 
 class CreateJobTest extends AbstractIntegrationTestCase
 {
+    private static JobFactory $jobFactory;
     private static ResultsJob $resultsJob;
 
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
-        self::$resultsJob = self::getResultsClient()->createJob(self::getApiToken(), self::getJobLabel());
+        self::$jobFactory = new JobFactory(self::$client);
+
+        $serviceClient = (new ServiceClientFactory())->create();
+        $resultsClient = (new ResultsClientFactory($serviceClient))->create();
+        $apiTokenFactory = new ApiTokenFactory($serviceClient);
+        $jobLabelFactory = new JobLabelFactory();
+
+        self::$resultsJob = $resultsClient->createJob($apiTokenFactory->create(), $jobLabelFactory->create());
     }
 
     public function testCreateJobSourceTestMissing(): void
@@ -32,7 +45,7 @@ class CreateJobTest extends AbstractIntegrationTestCase
         );
 
         try {
-            $this->makeCreateJobCall($jobCreationProperties);
+            self::$jobFactory->create($jobCreationProperties);
         } catch (JobCreationException $e) {
             self::assertEquals(
                 new JobCreationException('source/test/missing', ['path' => 'test2.yml']),
@@ -50,8 +63,8 @@ class CreateJobTest extends AbstractIntegrationTestCase
         );
 
         try {
-            $this->makeCreateJobCall($jobCreationProperties);
-            $this->makeCreateJobCall($jobCreationProperties);
+            self::$jobFactory->create($jobCreationProperties);
+            self::$jobFactory->create($jobCreationProperties);
         } catch (JobCreationException $e) {
             self::assertEquals(
                 new JobCreationException('job/already_exists', []),
@@ -74,7 +87,7 @@ class CreateJobTest extends AbstractIntegrationTestCase
 
         $expectedJob = $expectedJobCreator($jobCreationProperties);
 
-        self::assertEquals($expectedJob, $this->makeCreateJobCall($jobCreationProperties));
+        self::assertEquals($expectedJob, self::$jobFactory->create($jobCreationProperties));
     }
 
     /**

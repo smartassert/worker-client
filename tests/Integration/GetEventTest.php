@@ -6,6 +6,7 @@ namespace SmartAssert\WorkerClient\Tests\Integration;
 
 use SmartAssert\WorkerClient\Model\Event;
 use SmartAssert\WorkerClient\Model\ResourceReference;
+use SmartAssert\WorkerClient\Tests\Services\WorkerEventFactory;
 
 /**
  * @phpstan-type SerializedResourceReference array{
@@ -21,6 +22,15 @@ use SmartAssert\WorkerClient\Model\ResourceReference;
  */
 class GetEventTest extends AbstractIntegrationTestCase
 {
+    protected static WorkerEventFactory $workerEventFactory;
+
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+
+        self::$workerEventFactory = new WorkerEventFactory(self::$dataRepository);
+    }
+
     /**
      * @dataProvider getEventDataProvider
      *
