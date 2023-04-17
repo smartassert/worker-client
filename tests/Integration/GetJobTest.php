@@ -9,17 +9,20 @@ use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\ResourceReference;
 use SmartAssert\WorkerClient\Model\Test;
 use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
+use SmartAssert\WorkerClient\Tests\Services\TestFactory;
 use SmartAssert\YamlFile\Collection\ArrayCollection;
 use SmartAssert\YamlFile\YamlFile;
 
 class GetJobTest extends AbstractIntegrationTestCase
 {
+    private static TestFactory $testFactory;
     private static ResultsJob $resultsJob;
 
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
+        self::$testFactory = new TestFactory(self::$dataRepository);
         self::$resultsJob = self::getResultsClient()->createJob(self::getApiToken(), self::getJobLabel());
     }
 

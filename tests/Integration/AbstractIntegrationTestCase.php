@@ -22,7 +22,6 @@ use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
 use SmartAssert\WorkerClient\Tests\Services\ClientFactory;
 use SmartAssert\WorkerClient\Tests\Services\DataRepository;
 use SmartAssert\WorkerClient\Tests\Services\JobSourceSerializerFactory;
-use SmartAssert\WorkerClient\Tests\Services\TestFactory;
 use SmartAssert\WorkerJobSource\Model\JobSource;
 use SmartAssert\WorkerJobSource\Model\Manifest;
 use Symfony\Component\Uid\Ulid;
@@ -30,7 +29,6 @@ use Symfony\Component\Uid\Ulid;
 abstract class AbstractIntegrationTestCase extends TestCase
 {
     protected static Client $client;
-    protected static TestFactory $testFactory;
     protected static ?ResultsClient $resultsClient = null;
 
     /**
@@ -52,8 +50,6 @@ abstract class AbstractIntegrationTestCase extends TestCase
         self::$dataRepository = new DataRepository(
             'pgsql:host=localhost;port=5432;dbname=worker-db;user=postgres;password=password!'
         );
-
-        self::$testFactory = new TestFactory(self::$dataRepository);
     }
 
     protected function setUp(): void
