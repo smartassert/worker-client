@@ -93,7 +93,6 @@ class Client
 
     /**
      * @param non-empty-string $label
-     * @param non-empty-string $eventDeliveryUrl
      * @param positive-int     $maximumDurationInSeconds
      *
      * @throws ClientExceptionInterface
@@ -105,7 +104,7 @@ class Client
      */
     public function createJob(
         string $label,
-        string $eventDeliveryUrl,
+        string $resultsToken,
         int $maximumDurationInSeconds,
         string $serializedJobSource
     ): Job {
@@ -113,7 +112,7 @@ class Client
             (new Request('POST', $this->createUrl('/job')))
                 ->withPayload(new UrlEncodedPayload([
                     'label' => $label,
-                    'event_delivery_url' => $eventDeliveryUrl,
+                    'results_token' => $resultsToken,
                     'maximum_duration_in_seconds' => $maximumDurationInSeconds,
                     'source' => $serializedJobSource,
                 ]))

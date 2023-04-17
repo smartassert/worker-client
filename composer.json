@@ -25,13 +25,33 @@
             "docker-compose -f ./tests/build/docker-compose.yml exec -T worker-service php bin/console doctrine:database:create --if-not-exists",
             "docker-compose -f ./tests/build/docker-compose.yml exec -T worker-service php bin/console doctrine:schema:update --force --no-interaction --complete"
         ],
+        "users-db-setup": [
+            "docker-compose -f tests/build/docker-compose.yml exec -T users-service php bin/console doctrine:database:create --if-not-exists",
+            "docker-compose -f tests/build/docker-compose.yml exec -T users-service php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration"
+        ],
+        "users-generate-jwt-keys": "docker-compose -f tests/build/docker-compose.yml exec -T users-service php bin/console lexik:jwt:generate-keypair --overwrite --no-interaction",
+        "users-create-user": [
+            "curl --header 'Authorization: primary_admin_token' --data 'email=user@example.com&password=password' http://localhost:9080/admin/user/create",
+            ""
+        ],
+        "users-setup": [
+            "@users-db-setup",
+            "@users-generate-jwt-keys",
+            "@users-create-user"
+        ],
+        "results-setup": [
+            "docker-compose -f tests/build/docker-compose.yml exec -T results-service php bin/console doctrine:database:create --if-not-exists",
+            "docker-compose -f tests/build/docker-compose.yml exec -T results-service php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration"
+        ],
         "integration-up": "docker-compose -f tests/build/docker-compose.yml  up -d",
         "integration-status": "docker-compose -f tests/build/docker-compose.yml ps",
         "integration-logs": "docker-compose -f tests/build/docker-compose.yml logs",
         "integration-setup": [
             "@integration-up",
             "sleep 2",
-            "@worker-setup"
+            "@worker-setup",
+            "@users-setup",
+            "@results-setup"
         ],
         "integration-teardown": [
             "docker-compose -f ./tests/build/docker-compose.yml down"
@@ -64,7 +84,10 @@
         "guzzlehttp/guzzle": "^7.5",
         "phpstan/extension-installer": "^1.2",
         "phpstan/phpstan-phpunit": "^1.3",
-        "smartassert/worker-job-source": "^0.2.0"
+        "smartassert/worker-job-source": "^0.2.0",
+        "smartassert/results-client": "^5.4",
+        "smartassert/test-authenticaton-provider-bundle": "^0.2.0",
+        "symfony/uid": "^6.2"
     },
     "minimum-stability":"stable",
     "prefer-stable":true,
