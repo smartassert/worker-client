@@ -34,8 +34,9 @@ class GetJobTest extends AbstractIntegrationTestCase
         $serviceClient = (new ServiceClientFactory())->create();
         $resultsClient = (new ResultsClientFactory($serviceClient))->create();
         $apiTokenFactory = new ApiTokenFactory($serviceClient);
+        $jobLabelFactory = new JobLabelFactory();
 
-        self::$resultsJob = $resultsClient->createJob($apiTokenFactory->create(), (new JobLabelFactory())->create());
+        self::$resultsJob = $resultsClient->createJob($apiTokenFactory->create(), $jobLabelFactory->create());
     }
 
     public function testGetJobJobNotFound(): void
