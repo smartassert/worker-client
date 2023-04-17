@@ -9,9 +9,6 @@ use GuzzleHttp\Psr7\HttpFactory;
 use PHPUnit\Framework\TestCase;
 use SmartAssert\ServiceClient\Client as ServiceClient;
 use SmartAssert\ServiceClient\ResponseFactory\ResponseFactory;
-use SmartAssert\TestAuthenticationProviderBundle\ApiTokenProvider;
-use SmartAssert\TestAuthenticationProviderBundle\FrontendTokenProvider;
-use SmartAssert\UsersClient\Client as UsersClient;
 use SmartAssert\WorkerClient\Client;
 use SmartAssert\WorkerClient\Tests\Services\ClientFactory;
 use SmartAssert\WorkerClient\Tests\Services\DataRepository;
@@ -20,11 +17,6 @@ use Symfony\Component\Uid\Ulid;
 abstract class AbstractIntegrationTestCase extends TestCase
 {
     protected static Client $client;
-
-    /**
-     * @var null|non-empty-string
-     */
-    protected static ?string $apiToken = null;
     protected static ?ServiceClient $serviceClient = null;
 
     /**
@@ -59,21 +51,6 @@ abstract class AbstractIntegrationTestCase extends TestCase
         }
 
         return self::$jobLabel;
-    }
-
-    /**
-     * @return non-empty-string
-     */
-    protected static function getApiToken(): string
-    {
-        if (null === self::$apiToken) {
-            $usersClient = new UsersClient('http://localhost:9080', self::getServiceClient());
-            $frontendTokenProvider = new FrontendTokenProvider(['user@example.com' => 'password'], $usersClient);
-            $apiTokenProvider = new ApiTokenProvider($usersClient, $frontendTokenProvider);
-            self::$apiToken = $apiTokenProvider->get('user@example.com');
-        }
-
-        return self::$apiToken;
     }
 
     protected static function getServiceClient(): ServiceClient
