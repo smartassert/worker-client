@@ -10,6 +10,8 @@ use SmartAssert\WorkerClient\Model\JobCreationException;
 use SmartAssert\WorkerClient\Model\ResourceReference;
 use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
 use SmartAssert\WorkerClient\Tests\Services\JobFactory;
+use SmartAssert\WorkerClient\Tests\Services\ResultsClientFactory;
+use SmartAssert\WorkerClient\Tests\Services\ServiceClientFactory;
 use SmartAssert\YamlFile\Collection\ArrayCollection;
 use SmartAssert\YamlFile\YamlFile;
 
@@ -23,7 +25,9 @@ class CreateJobTest extends AbstractIntegrationTestCase
         parent::setUpBeforeClass();
 
         self::$jobFactory = new JobFactory(self::$client);
-        self::$resultsJob = self::getResultsClient()->createJob(self::getApiToken(), self::getJobLabel());
+
+        $resultsClient = (new ResultsClientFactory((new ServiceClientFactory())->create()))->create();
+        self::$resultsJob = $resultsClient->createJob(self::getApiToken(), self::getJobLabel());
     }
 
     public function testCreateJobSourceTestMissing(): void

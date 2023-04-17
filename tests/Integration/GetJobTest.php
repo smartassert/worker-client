@@ -10,6 +10,8 @@ use SmartAssert\WorkerClient\Model\ResourceReference;
 use SmartAssert\WorkerClient\Model\Test;
 use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
 use SmartAssert\WorkerClient\Tests\Services\JobFactory;
+use SmartAssert\WorkerClient\Tests\Services\ResultsClientFactory;
+use SmartAssert\WorkerClient\Tests\Services\ServiceClientFactory;
 use SmartAssert\WorkerClient\Tests\Services\TestFactory;
 use SmartAssert\YamlFile\Collection\ArrayCollection;
 use SmartAssert\YamlFile\YamlFile;
@@ -26,7 +28,9 @@ class GetJobTest extends AbstractIntegrationTestCase
 
         self::$jobFactory = new JobFactory(self::$client);
         self::$testFactory = new TestFactory(self::$dataRepository);
-        self::$resultsJob = self::getResultsClient()->createJob(self::getApiToken(), self::getJobLabel());
+
+        $resultsClient = (new ResultsClientFactory((new ServiceClientFactory())->create()))->create();
+        self::$resultsJob = $resultsClient->createJob(self::getApiToken(), self::getJobLabel());
     }
 
     public function testGetJobJobNotFound(): void

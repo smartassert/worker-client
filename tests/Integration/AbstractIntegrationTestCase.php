@@ -7,9 +7,6 @@ namespace SmartAssert\WorkerClient\Tests\Integration;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Psr7\HttpFactory;
 use PHPUnit\Framework\TestCase;
-use SmartAssert\ResultsClient\Client as ResultsClient;
-use SmartAssert\ResultsClient\EventFactory;
-use SmartAssert\ResultsClient\ResourceReferenceFactory;
 use SmartAssert\ServiceClient\Client as ServiceClient;
 use SmartAssert\ServiceClient\ResponseFactory\ResponseFactory;
 use SmartAssert\TestAuthenticationProviderBundle\ApiTokenProvider;
@@ -23,7 +20,6 @@ use Symfony\Component\Uid\Ulid;
 abstract class AbstractIntegrationTestCase extends TestCase
 {
     protected static Client $client;
-    protected static ?ResultsClient $resultsClient = null;
 
     /**
      * @var null|non-empty-string
@@ -49,17 +45,6 @@ abstract class AbstractIntegrationTestCase extends TestCase
     protected function setUp(): void
     {
         self::$dataRepository->removeAllData();
-    }
-
-    protected static function getResultsClient(): ResultsClient
-    {
-        if (null === self::$resultsClient) {
-            $eventFactory = new EventFactory(new ResourceReferenceFactory());
-
-            self::$resultsClient = new ResultsClient('http://localhost:9081', self::getServiceClient(), $eventFactory);
-        }
-
-        return self::$resultsClient;
     }
 
     /**
