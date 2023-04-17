@@ -18,7 +18,7 @@ use SmartAssert\WorkerClient\Tests\Functional\DataProvider\InvalidJsonResponseEx
 use SmartAssert\WorkerClient\Tests\Functional\DataProvider\NetworkErrorExceptionDataProviderTrait;
 use SmartAssert\WorkerClient\Tests\Services\ClientFactory;
 
-abstract class AbstractClientTest extends TestCase
+abstract class AbstractClientTestCase extends TestCase
 {
     use CommonNonSuccessResponseDataProviderTrait;
     use InvalidJsonResponseExceptionDataProviderTrait;

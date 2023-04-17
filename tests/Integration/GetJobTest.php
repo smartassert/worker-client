@@ -12,7 +12,7 @@ use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
 use SmartAssert\YamlFile\Collection\ArrayCollection;
 use SmartAssert\YamlFile\YamlFile;
 
-class GetJobTest extends AbstractIntegrationTest
+class GetJobTest extends AbstractIntegrationTestCase
 {
     private static ResultsJob $resultsJob;
 

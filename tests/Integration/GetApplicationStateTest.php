@@ -6,7 +6,7 @@ namespace SmartAssert\WorkerClient\Tests\Integration;
 
 use SmartAssert\WorkerClient\Model\ApplicationState;
 
-class GetApplicationStateTest extends AbstractIntegrationTest
+class GetApplicationStateTest extends AbstractIntegrationTestCase
 {
     public function testGetSuccess(): void
     {

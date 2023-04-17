@@ -6,7 +6,7 @@ namespace SmartAssert\WorkerClient\Tests\Functional\Client;
 
 use SmartAssert\WorkerClient\Model\Event;
 
-class GetEventTest extends AbstractClientTest
+class GetEventTest extends AbstractClientTestCase
 {
     protected function createClientActionCallable(): callable
     {

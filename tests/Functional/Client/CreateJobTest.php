@@ -6,7 +6,7 @@ namespace SmartAssert\WorkerClient\Tests\Functional\Client;
 
 use SmartAssert\WorkerClient\Model\Job;
 
-class CreateJobTest extends AbstractClientTest
+class CreateJobTest extends AbstractClientTestCase
 {
     protected function createClientActionCallable(): callable
     {
