@@ -31,7 +31,6 @@ use Symfony\Component\Uid\Ulid;
 abstract class AbstractIntegrationTestCase extends TestCase
 {
     protected static Client $client;
-    protected static DataRepository $dataRepository;
     protected static WorkerEventFactory $workerEventFactory;
     protected static TestFactory $testFactory;
     protected static ?ResultsClient $resultsClient = null;
@@ -46,6 +45,7 @@ abstract class AbstractIntegrationTestCase extends TestCase
      * @var null|non-empty-string
      */
     protected static ?string $jobLabel = null;
+    private static DataRepository $dataRepository;
 
     public static function setUpBeforeClass(): void
     {
