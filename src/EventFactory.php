@@ -17,12 +17,10 @@ class EventFactory
 
     public function create(ArrayInspector $data): ?Event
     {
-        $headerData = new ArrayInspector($data->getArray('header'));
-
-        $sequenceNumber = $headerData->getPositiveInteger('sequence_number');
-        $type = $headerData->getNonEmptyString('type');
-        $resourceReference = $this->resourceReferenceFactory->create($headerData);
-        $relatedReferencesData = $headerData->getArray('related_references');
+        $sequenceNumber = $data->getPositiveInteger('sequence_number');
+        $type = $data->getNonEmptyString('type');
+        $resourceReference = $this->resourceReferenceFactory->create($data);
+        $relatedReferencesData = $data->getArray('related_references');
         $body = $data->getArray('body');
 
         $references = [];

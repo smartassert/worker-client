@@ -20,16 +20,14 @@ class JobFactory
     public function create(ArrayInspector $data): ?Job
     {
         $reference = $this->resourceReferenceFactory->create($data);
-        $eventDeliveryUrl = $data->getNonEmptyString('event_delivery_url');
         $maximumDurationInSeconds = $data->getPositiveInteger('maximum_duration_in_seconds');
 
-        if (null === $reference || null === $eventDeliveryUrl || null === $maximumDurationInSeconds) {
+        if (null === $reference || null === $maximumDurationInSeconds) {
             return null;
         }
 
         return new Job(
             $reference,
-            $eventDeliveryUrl,
             $maximumDurationInSeconds,
             $data->getNonEmptyStringArray('test_paths'),
             $data->getNonEmptyStringArray('sources'),

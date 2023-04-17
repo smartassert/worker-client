@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Tests\Integration;
 
+use SmartAssert\ResultsClient\Model\Job as ResultsJob;
 use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\ResourceReference;
 use SmartAssert\WorkerClient\Model\Test;
@@ -13,6 +14,15 @@ use SmartAssert\YamlFile\YamlFile;
 
 class GetJobTest extends AbstractIntegrationTest
 {
+    private static ResultsJob $resultsJob;
+
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+
+        self::$resultsJob = self::getResultsClient()->createJob(self::getApiToken(), self::getJobLabel());
+    }
+
     public function testGetJobJobNotFound(): void
     {
         self::assertNull(self::$client->getJob());
@@ -21,20 +31,24 @@ class GetJobTest extends AbstractIntegrationTest
     /**
      * @dataProvider getJobSuccessDataProvider
      *
-     * @param Test[] $tests
+     * @param callable(ResultsJob): JobCreationProperties $jobCreationPropertiesCreator
+     * @param callable(JobCreationProperties): Job        $expectedJobCreator
+     * @param Test[]                                      $tests
      */
     public function testGetJobSuccess(
-        JobCreationProperties $jobCreationProperties,
+        callable $jobCreationPropertiesCreator,
         array $tests,
-        Job $expected
+        callable $expectedJobCreator,
     ): void {
+        $jobCreationProperties = $jobCreationPropertiesCreator(self::$resultsJob);
+
         $this->makeCreateJobCall($jobCreationProperties);
 
         foreach ($tests as $test) {
             self::$testFactory->createFromModel($test);
         }
 
-        self::assertEquals($expected, self::$client->getJob());
+        self::assertEquals($expectedJobCreator($jobCreationProperties), self::$client->getJob());
     }
 
     /**
@@ -42,24 +56,6 @@ class GetJobTest extends AbstractIntegrationTest
      */
     public function getJobSuccessDataProvider(): array
     {
-        $hasTestsJobCreationProperties = new JobCreationProperties(
-            manifestPaths: ['test1.yml', 'test2.yml', 'test3.yml'],
-            sources: new ArrayCollection([
-                YamlFile::create('test1.yml', 'test 1 content'),
-                YamlFile::create('test2.yml', 'test 2 content'),
-                YamlFile::create('test3.yml', 'test 3 content'),
-                YamlFile::create('page.yml', 'page content'),
-            ])
-        );
-
-        $noTestsJobCreationProperties = new JobCreationProperties(
-            manifestPaths: ['test1.yml', 'test2.yml'],
-            sources: new ArrayCollection([
-                YamlFile::create('test1.yml', 'test 1 content'),
-                YamlFile::create('test2.yml', 'test 2 content'),
-            ])
-        );
-
         $tests = [
             new Test(
                 'chrome',
@@ -83,70 +79,81 @@ class GetJobTest extends AbstractIntegrationTest
 
         return [
             'no tests' => [
-                'jobCreationProperties' => $noTestsJobCreationProperties,
+                'jobCreationPropertiesCreator' => function (ResultsJob $resultsJob) {
+                    return new JobCreationProperties(
+                        resultsJob: $resultsJob,
+                        manifestPaths: ['test1.yml', 'test2.yml'],
+                        sources: new ArrayCollection([
+                            YamlFile::create('test1.yml', 'test 1 content'),
+                            YamlFile::create('test2.yml', 'test 2 content'),
+                        ])
+                    );
+                },
                 'tests' => [],
-                'expected' => new Job(
-                    $this->createResourceReference(
-                        $noTestsJobCreationProperties->label,
-                        [$noTestsJobCreationProperties->label]
-                    ),
-                    $noTestsJobCreationProperties->eventDeliveryUrl,
-                    $noTestsJobCreationProperties->maximumDurationInSeconds,
-                    $noTestsJobCreationProperties->manifestPaths,
-                    ['test1.yml', 'test2.yml'],
-                    [],
-                    [
-                        $this->createResourceReference(
-                            'test1.yml',
-                            [$noTestsJobCreationProperties->label, 'test1.yml']
-                        ),
-                        $this->createResourceReference(
-                            'test2.yml',
-                            [$noTestsJobCreationProperties->label, 'test2.yml']
-                        ),
-                    ],
-                    [1, 2]
-                ),
+                'expectedJobCreator' => function (JobCreationProperties $jobCreationProperties) {
+                    $resultsJob = $jobCreationProperties->resultsJob;
+
+                    return new Job(
+                        new ResourceReference($resultsJob->label, md5($resultsJob->label)),
+                        $jobCreationProperties->maximumDurationInSeconds,
+                        $jobCreationProperties->manifestPaths,
+                        ['test1.yml', 'test2.yml'],
+                        [],
+                        [
+                            new ResourceReference(
+                                'test1.yml',
+                                md5($resultsJob->label . 'test1.yml')
+                            ),
+                            new ResourceReference(
+                                'test2.yml',
+                                md5($resultsJob->label . 'test2.yml')
+                            ),
+                        ],
+                        [1, 2]
+                    );
+                },
             ],
             'has tests' => [
-                'jobCreationProperties' => $hasTestsJobCreationProperties,
+                'jobCreationPropertiesCreator' => function (ResultsJob $resultsJob) {
+                    return new JobCreationProperties(
+                        resultsJob: $resultsJob,
+                        manifestPaths: ['test1.yml', 'test2.yml', 'test3.yml'],
+                        sources: new ArrayCollection([
+                            YamlFile::create('test1.yml', 'test 1 content'),
+                            YamlFile::create('test2.yml', 'test 2 content'),
+                            YamlFile::create('test3.yml', 'test 3 content'),
+                            YamlFile::create('page.yml', 'page content'),
+                        ])
+                    );
+                },
                 'tests' => $tests,
-                'expected' => new Job(
-                    $this->createResourceReference(
-                        $hasTestsJobCreationProperties->label,
-                        [$hasTestsJobCreationProperties->label]
-                    ),
-                    $hasTestsJobCreationProperties->eventDeliveryUrl,
-                    $hasTestsJobCreationProperties->maximumDurationInSeconds,
-                    $hasTestsJobCreationProperties->manifestPaths,
-                    ['test1.yml', 'test2.yml', 'test3.yml', 'page.yml'],
-                    $tests,
-                    [
-                        $this->createResourceReference(
-                            'test1.yml',
-                            [$hasTestsJobCreationProperties->label, 'test1.yml']
-                        ),
-                        $this->createResourceReference(
-                            'test2.yml',
-                            [$hasTestsJobCreationProperties->label, 'test2.yml']
-                        ),
-                        $this->createResourceReference(
-                            'test3.yml',
-                            [$hasTestsJobCreationProperties->label, 'test3.yml']
-                        ),
-                    ],
-                    [1, 2]
-                ),
+                'expectedJobCreator' => function (JobCreationProperties $jobCreationProperties) use ($tests) {
+                    $resultsJob = $jobCreationProperties->resultsJob;
+
+                    return new Job(
+                        new ResourceReference($resultsJob->label, md5($resultsJob->label)),
+                        $jobCreationProperties->maximumDurationInSeconds,
+                        $jobCreationProperties->manifestPaths,
+                        ['test1.yml', 'test2.yml', 'test3.yml', 'page.yml'],
+                        $tests,
+                        [
+                            new ResourceReference(
+                                'test1.yml',
+                                md5($resultsJob->label . 'test1.yml')
+                            ),
+                            new ResourceReference(
+                                'test2.yml',
+                                md5($resultsJob->label . 'test2.yml')
+                            ),
+                            new ResourceReference(
+                                'test3.yml',
+                                md5($resultsJob->label . 'test3.yml')
+                            ),
+                        ],
+                        [1, 2]
+                    );
+                },
             ],
         ];
-    }
-
-    /**
-     * @param non-empty-string   $label
-     * @param non-empty-string[] $components
-     */
-    private function createResourceReference(string $label, array $components): ResourceReference
-    {
-        return new ResourceReference($label, md5(implode('', $components)));
     }
 }

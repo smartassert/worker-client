@@ -8,11 +8,59 @@ services:
     ports:
       - "5432:5432"
 
+  users-service:
+    image: ghcr.io/smartassert/users:0.8
+    container_name: users-service
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/users?serverVersion=12&charset=utf8
+      JWT_PASSPHRASE: non-empty-string
+      PRIMARY_ADMIN_TOKEN: primary_admin_token
+      SECONDARY_ADMIN_TOKEN: secondary_admin_token
+      IS_READY: 1
+    depends_on:
+      - postgres
+
+  users-http:
+    image: caddy:2.4.5-alpine
+    container_name: users-http
+    restart: unless-stopped
+    ports:
+      - "9080:80"
+    links:
+      - users-service:app
+    volumes:
+      - ./http-config/caddy/index.php:/app/public/index.php
+      - ./http-config/caddy/Caddyfile:/etc/caddy/Caddyfile
+
+  results-service:
+    image: ghcr.io/smartassert/results:1.4
+    container_name: results-service
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/results?serverVersion=12&charset=utf8
+      AUTHENTICATION_BASE_URL: http://users-http
+      IS_READY: 1
+    depends_on:
+      - postgres
+      - users-http
+
+  results-http:
+    image: caddy:2.4.5-alpine
+    container_name: results-http
+    restart: unless-stopped
+    ports:
+      - "9081:80"
+    links:
+      - results-service:app
+    volumes:
+      - ./http-config/caddy/index.php:/app/public/index.php
+      - ./http-config/caddy/Caddyfile:/etc/caddy/Caddyfile
+
   worker-service:
-    image: ghcr.io/smartassert/worker:5.0.1
+    image: ghcr.io/smartassert/worker:6.0
     container_name: worker-service
     environment:
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/worker-db?serverVersion=12&charset=utf8
+      RESULTS_BASE_URL: http://results-http
     depends_on:
       - postgres
     volumes:
@@ -23,7 +71,7 @@ services:
     container_name: worker-http
     restart: unless-stopped
     ports:
-      - "9080:80"
+      - "9082:80"
     links:
       - worker-service:app
     volumes:
