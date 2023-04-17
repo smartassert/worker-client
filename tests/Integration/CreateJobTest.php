@@ -11,6 +11,7 @@ use SmartAssert\WorkerClient\Model\ResourceReference;
 use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
 use SmartAssert\WorkerClient\Tests\Services\ApiTokenFactory;
 use SmartAssert\WorkerClient\Tests\Services\JobFactory;
+use SmartAssert\WorkerClient\Tests\Services\JobLabelFactory;
 use SmartAssert\WorkerClient\Tests\Services\ResultsClientFactory;
 use SmartAssert\WorkerClient\Tests\Services\ServiceClientFactory;
 use SmartAssert\YamlFile\Collection\ArrayCollection;
@@ -31,7 +32,7 @@ class CreateJobTest extends AbstractIntegrationTestCase
         $resultsClient = (new ResultsClientFactory($serviceClient))->create();
         $apiTokenFactory = new ApiTokenFactory($serviceClient);
 
-        self::$resultsJob = $resultsClient->createJob($apiTokenFactory->create(), self::getJobLabel());
+        self::$resultsJob = $resultsClient->createJob($apiTokenFactory->create(), (new JobLabelFactory())->create());
     }
 
     public function testCreateJobSourceTestMissing(): void
