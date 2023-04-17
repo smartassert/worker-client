@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Tests\Integration;
 
-use GuzzleHttp\Client as HttpClient;
-use GuzzleHttp\Psr7\HttpFactory;
 use PHPUnit\Framework\TestCase;
 use SmartAssert\ServiceClient\Client as ServiceClient;
-use SmartAssert\ServiceClient\ResponseFactory\ResponseFactory;
 use SmartAssert\WorkerClient\Client;
 use SmartAssert\WorkerClient\Tests\Services\ClientFactory;
 use SmartAssert\WorkerClient\Tests\Services\DataRepository;
@@ -51,17 +48,5 @@ abstract class AbstractIntegrationTestCase extends TestCase
         }
 
         return self::$jobLabel;
-    }
-
-    protected static function getServiceClient(): ServiceClient
-    {
-        if (null === self::$serviceClient) {
-            $httpFactory = new HttpFactory();
-            $httpClient = new HttpClient();
-            $responseFactory = ResponseFactory::createFactory();
-            self::$serviceClient = new ServiceClient($httpFactory, $httpFactory, $httpClient, $responseFactory);
-        }
-
-        return self::$serviceClient;
     }
 }
