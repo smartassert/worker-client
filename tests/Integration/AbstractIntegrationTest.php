@@ -39,11 +39,15 @@ abstract class AbstractIntegrationTest extends TestCase
     protected static WorkerEventFactory $workerEventFactory;
     protected static TestFactory $testFactory;
     protected static ?ResultsClient $resultsClient = null;
+
+    /**
+     * @var null|non-empty-string
+     */
     protected static ?string $apiToken = null;
     protected static ?ServiceClient $serviceClient = null;
 
     /**
-     * @var non-empty-string|null
+     * @var null|non-empty-string
      */
     protected static ?string $jobLabel = null;
 
@@ -88,8 +92,8 @@ abstract class AbstractIntegrationTest extends TestCase
         $serializedSource = $jobSourceSerializer->serialize($jobSource);
 
         return self::$client->createJob(
-            $jobCreationProperties->label,
-            $jobCreationProperties->resultsToken,
+            $jobCreationProperties->resultsJob->label,
+            $jobCreationProperties->resultsJob->token,
             $jobCreationProperties->maximumDurationInSeconds,
             $serializedSource,
         );
@@ -120,6 +124,9 @@ abstract class AbstractIntegrationTest extends TestCase
         return self::$jobLabel;
     }
 
+    /**
+     * @return non-empty-string
+     */
     protected static function getApiToken(): string
     {
         if (null === self::$apiToken) {

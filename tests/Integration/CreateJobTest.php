@@ -4,24 +4,13 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Tests\Integration;
 
-use GuzzleHttp\Client as HttpClient;
-use GuzzleHttp\Psr7\HttpFactory;
-use SmartAssert\ResultsClient\Client as ResultsClient;
-use SmartAssert\ResultsClient\EventFactory;
 use SmartAssert\ResultsClient\Model\Job as ResultsJob;
-use SmartAssert\ResultsClient\ResourceReferenceFactory;
-use SmartAssert\ServiceClient\Client as ServiceClient;
-use SmartAssert\ServiceClient\ResponseFactory\ResponseFactory;
-use SmartAssert\TestAuthenticationProviderBundle\ApiTokenProvider;
-use SmartAssert\TestAuthenticationProviderBundle\FrontendTokenProvider;
-use SmartAssert\UsersClient\Client as UsersClient;
 use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\JobCreationException;
 use SmartAssert\WorkerClient\Model\ResourceReference;
 use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
 use SmartAssert\YamlFile\Collection\ArrayCollection;
 use SmartAssert\YamlFile\YamlFile;
-use Symfony\Component\Uid\Ulid;
 
 class CreateJobTest extends AbstractIntegrationTest
 {
@@ -74,14 +63,14 @@ class CreateJobTest extends AbstractIntegrationTest
     /**
      * @dataProvider createJobSuccessDataProvider
      *
-     * @param callable(non-empty-string, string): JobCreationProperties $jobCreationPropertiesCreator
-     * @param callable(JobCreationProperties): Job                      $expectedJobCreator
+     * @param callable(ResultsJob): JobCreationProperties $jobCreationPropertiesCreator
+     * @param callable(JobCreationProperties): Job        $expectedJobCreator
      */
     public function testCreateJobSuccess(
         callable $jobCreationPropertiesCreator,
         callable $expectedJobCreator,
     ): void {
-        $jobCreationProperties = $jobCreationPropertiesCreator(self::$jobLabel, self::$resultsJob->token);
+        $jobCreationProperties = $jobCreationPropertiesCreator(self::$resultsJob);
 
         $expectedJob = $expectedJobCreator($jobCreationProperties);
 
@@ -95,8 +84,7 @@ class CreateJobTest extends AbstractIntegrationTest
     {
         return [
             'single test, no additional sources' => [
-                'jobCreationPropertiesCreator' => function (ResultsJob $resultsJob)
-                {
+                'jobCreationPropertiesCreator' => function (ResultsJob $resultsJob) {
                     return new JobCreationProperties(
                         resultsJob: $resultsJob,
                         maximumDurationInSeconds: 60,
@@ -124,8 +112,7 @@ class CreateJobTest extends AbstractIntegrationTest
                 },
             ],
             'multiple tests, has additional sources' => [
-                'jobCreationPropertiesCreator' => function (ResultsJob $resultsJob)
-                {
+                'jobCreationPropertiesCreator' => function (ResultsJob $resultsJob) {
                     return new JobCreationProperties(
                         resultsJob: $resultsJob,
                         maximumDurationInSeconds: 60,

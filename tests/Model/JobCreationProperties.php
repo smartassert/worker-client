@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Tests\Model;
 
+use SmartAssert\ResultsClient\Model\Job as ResultsJob;
 use SmartAssert\YamlFile\Collection\ArrayCollection;
 use SmartAssert\YamlFile\Collection\ProviderInterface;
-use SmartAssert\ResultsClient\Model\Job as ResultsJob;
 
 class JobCreationProperties
 {
