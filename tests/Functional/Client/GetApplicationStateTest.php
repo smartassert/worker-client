@@ -6,6 +6,7 @@ namespace SmartAssert\WorkerClient\Tests\Functional\Client;
 
 use GuzzleHttp\Psr7\Response;
 use SmartAssert\WorkerClient\Model\ApplicationState;
+use SmartAssert\WorkerClient\Model\ComponentState;
 
 class GetApplicationStateTest extends AbstractClientTestCase
 {
@@ -38,48 +39,133 @@ class GetApplicationStateTest extends AbstractClientTestCase
         return [
             'new job' => [
                 'responseData' => [
-                    'application' => 'awaiting-job',
-                    'compilation' => 'awaiting',
-                    'execution' => 'awaiting',
-                    'event_delivery' => 'awaiting',
+                    'application' => [
+                        'state' => 'awaiting-job',
+                        'is_end_state' => false,
+                    ],
+                    'compilation' => [
+                        'state' => 'awaiting',
+                        'is_end_state' => false,
+                    ],
+                    'execution' => [
+                        'state' => 'awaiting',
+                        'is_end_state' => false,
+                    ],
+                    'event_delivery' => [
+                        'state' => 'awaiting',
+                        'is_end_state' => false,
+                    ],
                 ],
-                'expected' => new ApplicationState('awaiting-job', 'awaiting', 'awaiting', 'awaiting'),
+                'expected' => new ApplicationState(
+                    new ComponentState('awaiting-job', false),
+                    new ComponentState('awaiting', false),
+                    new ComponentState('awaiting', false),
+                    new ComponentState('awaiting', false),
+                ),
             ],
             'compiling' => [
                 'responseData' => [
-                    'application' => 'compiling',
-                    'compilation' => 'running',
-                    'execution' => 'awaiting',
-                    'event_delivery' => 'running',
+                    'application' => [
+                        'state' => 'compiling',
+                        'is_end_state' => false,
+                    ],
+                    'compilation' => [
+                        'state' => 'running',
+                        'is_end_state' => false,
+                    ],
+                    'execution' => [
+                        'state' => 'awaiting',
+                        'is_end_state' => false,
+                    ],
+                    'event_delivery' => [
+                        'state' => 'running',
+                        'is_end_state' => false,
+                    ],
                 ],
-                'expected' => new ApplicationState('compiling', 'running', 'awaiting', 'running'),
+                'expected' => new ApplicationState(
+                    new ComponentState('compiling', false),
+                    new ComponentState('running', false),
+                    new ComponentState('awaiting', false),
+                    new ComponentState('running', false),
+                ),
             ],
             'executing' => [
                 'responseData' => [
-                    'application' => 'executing',
-                    'compilation' => 'complete',
-                    'execution' => 'running',
-                    'event_delivery' => 'running',
+                    'application' => [
+                        'state' => 'executing',
+                        'is_end_state' => false,
+                    ],
+                    'compilation' => [
+                        'state' => 'complete',
+                        'is_end_state' => true,
+                    ],
+                    'execution' => [
+                        'state' => 'running',
+                        'is_end_state' => false,
+                    ],
+                    'event_delivery' => [
+                        'state' => 'running',
+                        'is_end_state' => false,
+                    ],
                 ],
-                'expected' => new ApplicationState('executing', 'complete', 'running', 'running'),
+                'expected' => new ApplicationState(
+                    new ComponentState('executing', false),
+                    new ComponentState('complete', true),
+                    new ComponentState('running', false),
+                    new ComponentState('running', false),
+                ),
             ],
             'complete, awaiting event delivery completion' => [
                 'responseData' => [
-                    'application' => 'completing-event-delivery',
-                    'compilation' => 'complete',
-                    'execution' => 'complete',
-                    'event_delivery' => 'running',
+                    'application' => [
+                        'state' => 'completing-event-delivery',
+                        'is_end_state' => false,
+                    ],
+                    'compilation' => [
+                        'state' => 'complete',
+                        'is_end_state' => true,
+                    ],
+                    'execution' => [
+                        'state' => 'complete',
+                        'is_end_state' => true,
+                    ],
+                    'event_delivery' => [
+                        'state' => 'running',
+                        'is_end_state' => false,
+                    ],
                 ],
-                'expected' => new ApplicationState('completing-event-delivery', 'complete', 'complete', 'running'),
+                'expected' => new ApplicationState(
+                    new ComponentState('completing-event-delivery', false),
+                    new ComponentState('complete', true),
+                    new ComponentState('complete', true),
+                    new ComponentState('running', false),
+                ),
             ],
             'complete' => [
                 'responseData' => [
-                    'application' => 'complete',
-                    'compilation' => 'complete',
-                    'execution' => 'complete',
-                    'event_delivery' => 'complete',
+                    'application' => [
+                        'state' => 'complete',
+                        'is_end_state' => true,
+                    ],
+                    'compilation' => [
+                        'state' => 'complete',
+                        'is_end_state' => true,
+                    ],
+                    'execution' => [
+                        'state' => 'complete',
+                        'is_end_state' => true,
+                    ],
+                    'event_delivery' => [
+                        'state' => 'complete',
+                        'is_end_state' => true,
+                    ],
                 ],
-                'expected' => new ApplicationState('complete', 'complete', 'complete', 'complete'),
+                'expected' => new ApplicationState(
+                    new ComponentState('complete', true),
+                    new ComponentState('complete', true),
+                    new ComponentState('complete', true),
+                    new ComponentState('complete', true),
+                ),
             ],
         ];
     }
