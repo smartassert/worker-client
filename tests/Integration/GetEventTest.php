@@ -74,7 +74,7 @@ class GetEventTest extends AbstractIntegrationTestCase
     /**
      * @return array<mixed>
      */
-    public function getEventDataProvider(): array
+    public static function getEventDataProvider(): array
     {
         $jobLabel = md5((string) rand());
         $jobReference = md5($jobLabel);

@@ -34,7 +34,7 @@ class GetApplicationStateTest extends AbstractClientTestCase
     /**
      * @return array<mixed>
      */
-    public function getApplicationStateDataProvider(): array
+    public static function getApplicationStateDataProvider(): array
     {
         return [
             'new job' => [

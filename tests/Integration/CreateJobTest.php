@@ -93,7 +93,7 @@ class CreateJobTest extends AbstractIntegrationTestCase
     /**
      * @return array<mixed>
      */
-    public function createJobSuccessDataProvider(): array
+    public static function createJobSuccessDataProvider(): array
     {
         return [
             'single test, no additional sources' => [

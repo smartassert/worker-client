@@ -13,7 +13,7 @@ trait NetworkErrorExceptionDataProviderTrait
     /**
      * @return array<mixed>
      */
-    public function networkErrorExceptionDataProvider(): array
+    public static function networkErrorExceptionDataProvider(): array
     {
         return [
             'network error' => [
