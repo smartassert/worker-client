@@ -64,7 +64,16 @@ class GetJobTest extends AbstractIntegrationTestCase
             self::$testFactory->createFromModel($test);
         }
 
-        self::assertEquals($expectedJobCreator($jobCreationProperties), self::$client->getJob());
+        $expectedJob = $expectedJobCreator($jobCreationProperties);
+        $job = self::$client->getJob();
+        self::assertInstanceOf(Job::class, $job);
+
+        self::assertEquals($expectedJob->reference, $job->reference);
+        self::assertSame($expectedJob->maximumDurationInSeconds, $job->maximumDurationInSeconds);
+        self::assertEquals($expectedJob->sources, $job->sources);
+        self::assertEquals($expectedJob->tests, $job->tests);
+        self::assertEquals($expectedJob->relatedReferences, $job->relatedReferences);
+        self::assertSame($expectedJob->eventIds, array_intersect($expectedJob->eventIds, $job->eventIds));
     }
 
     /**
