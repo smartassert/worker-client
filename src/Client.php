@@ -15,6 +15,7 @@ use SmartAssert\ServiceClient\Payload\UrlEncodedPayload;
 use SmartAssert\ServiceClient\Request;
 use SmartAssert\ServiceClient\Response\JsonResponse;
 use SmartAssert\WorkerClient\Model\ApplicationState;
+use SmartAssert\WorkerClient\Model\ComponentState;
 use SmartAssert\WorkerClient\Model\Event;
 use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\JobCreationException;
@@ -192,14 +193,21 @@ class Client
 
     private function createApplicationStateModel(ArrayInspector $data): ?ApplicationState
     {
-        $application = $data->getNonEmptyString('application');
-        $compilation = $data->getNonEmptyString('compilation');
-        $execution = $data->getNonEmptyString('execution');
-        $eventDelivery = $data->getNonEmptyString('event_delivery');
+        $applicationState = $this->createComponentState($data->getArray('application'));
+        $compilationState = $this->createComponentState($data->getArray('compilation'));
+        $executionState = $this->createComponentState($data->getArray('execution'));
+        $eventDeliveryState = $this->createComponentState($data->getArray('event_delivery'));
 
-        return null === $application || null === $compilation || null === $execution || null === $eventDelivery
-            ? null
-            : new ApplicationState($application, $compilation, $execution, $eventDelivery);
+        if (
+            null === $applicationState
+            || null === $compilationState
+            || null === $executionState
+            || null === $eventDeliveryState
+        ) {
+            return null;
+        }
+
+        return new ApplicationState($applicationState, $compilationState, $executionState, $eventDeliveryState);
     }
 
     private function createJobCreationErrorModel(ArrayInspector $data): ?JobCreationException
@@ -208,5 +216,28 @@ class Client
         $payload = $data->getArray('payload');
 
         return null === $errorState ? null : new JobCreationException($errorState, $payload);
+    }
+
+    /**
+     * @param array<mixed> $data
+     */
+    private function createComponentState(array $data): ?ComponentState
+    {
+        $state = $data['state'] ?? null;
+        $state = is_string($state) ? $state : null;
+        $state = '' !== $state ? $state : null;
+
+        if (null === $state) {
+            return null;
+        }
+
+        $isEndState = $data['is_end_state'] ?? null;
+        $isEndState = is_bool($isEndState) ? $isEndState : null;
+
+        if (null === $isEndState) {
+            return null;
+        }
+
+        return new ComponentState($state, $isEndState);
     }
 }
