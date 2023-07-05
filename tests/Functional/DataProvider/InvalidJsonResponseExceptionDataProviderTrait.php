@@ -13,7 +13,7 @@ trait InvalidJsonResponseExceptionDataProviderTrait
     /**
      * @return array<mixed>
      */
-    public function invalidJsonResponseExceptionDataProvider(): array
+    public static function invalidJsonResponseExceptionDataProvider(): array
     {
         return [
             'invalid response content type' => [

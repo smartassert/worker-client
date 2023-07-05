@@ -11,7 +11,7 @@ trait CommonNonSuccessResponseDataProviderTrait
     /**
      * @return array<mixed>
      */
-    public function commonNonSuccessResponseDataProvider(): array
+    public static function commonNonSuccessResponseDataProvider(): array
     {
         return [
             'Internal server error' => [

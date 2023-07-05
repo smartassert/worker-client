@@ -70,7 +70,7 @@ class GetJobTest extends AbstractIntegrationTestCase
     /**
      * @return array<mixed>
      */
-    public function getJobSuccessDataProvider(): array
+    public static function getJobSuccessDataProvider(): array
     {
         $tests = [
             new Test(
