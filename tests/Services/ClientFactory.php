@@ -7,6 +7,7 @@ namespace SmartAssert\WorkerClient\Tests\Services;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Psr7\HttpFactory;
 use SmartAssert\ServiceClient\Client as ServiceClient;
+use SmartAssert\ServiceClient\ExceptionFactory\CurlExceptionFactory;
 use SmartAssert\ServiceClient\ResponseFactory\ResponseFactory;
 use SmartAssert\WorkerClient\Client;
 use SmartAssert\WorkerClient\EventFactory;
@@ -31,6 +32,7 @@ class ClientFactory
                 $httpFactory,
                 new HttpClient($httpClientConfig),
                 ResponseFactory::createFactory(),
+                new CurlExceptionFactory(),
             ),
             new EventFactory(
                 new ResourceReferenceFactory(),

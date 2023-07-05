@@ -33,7 +33,7 @@ services:
       - ./http-config/caddy/Caddyfile:/etc/caddy/Caddyfile
 
   results-service:
-    image: ghcr.io/smartassert/results:1.4
+    image: ghcr.io/smartassert/results:1.6
     container_name: results-service
     environment:
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/results?serverVersion=12&charset=utf8
