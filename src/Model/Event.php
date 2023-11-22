@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Model;
 
-class Event
+readonly class Event
 {
     /**
      * @param positive-int             $sequenceNumber
@@ -13,11 +13,11 @@ class Event
      * @param null|ResourceReference[] $relatedReferences
      */
     public function __construct(
-        public readonly int $sequenceNumber,
-        public readonly string $type,
-        public readonly ResourceReference $resourceReference,
-        public readonly array $body,
-        public readonly ?array $relatedReferences = null,
+        public int $sequenceNumber,
+        public string $type,
+        public ResourceReference $resourceReference,
+        public array $body,
+        public ?array $relatedReferences = null,
     ) {
     }
 }

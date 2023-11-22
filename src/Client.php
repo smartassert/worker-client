@@ -20,13 +20,13 @@ use SmartAssert\WorkerClient\Model\Event;
 use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\JobCreationException;
 
-class Client
+readonly class Client
 {
     public function __construct(
-        private readonly string $baseUrl,
-        private readonly ServiceClient $serviceClient,
-        private readonly EventFactory $eventFactory,
-        private readonly JobFactory $jobFactory,
+        private string $baseUrl,
+        private ServiceClient $serviceClient,
+        private EventFactory $eventFactory,
+        private JobFactory $jobFactory,
     ) {
     }
 

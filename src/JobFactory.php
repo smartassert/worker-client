@@ -9,11 +9,11 @@ use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\ResourceReference;
 use SmartAssert\WorkerClient\Model\Test;
 
-class JobFactory
+readonly class JobFactory
 {
     public function __construct(
-        private readonly ResourceReferenceFactory $resourceReferenceFactory,
-        private readonly TestFactory $testFactory,
+        private ResourceReferenceFactory $resourceReferenceFactory,
+        private TestFactory $testFactory,
     ) {
     }
 

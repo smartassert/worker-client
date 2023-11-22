@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Model;
 
-class Test
+readonly class Test
 {
     /**
      * @param non-empty-string   $browser
@@ -16,13 +16,13 @@ class Test
      * @param positive-int       $position
      */
     public function __construct(
-        public readonly string $browser,
-        public readonly string $url,
-        public readonly string $source,
-        public readonly string $target,
-        public readonly array $stepNames,
-        public readonly string $state,
-        public readonly int $position,
+        public string $browser,
+        public string $url,
+        public string $source,
+        public string $target,
+        public array $stepNames,
+        public string $state,
+        public int $position,
     ) {
     }
 }

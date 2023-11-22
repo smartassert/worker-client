@@ -8,10 +8,10 @@ use SmartAssert\ArrayInspector\ArrayInspector;
 use SmartAssert\WorkerClient\Model\Event;
 use SmartAssert\WorkerClient\Model\ResourceReference;
 
-class EventFactory
+readonly class EventFactory
 {
     public function __construct(
-        private readonly ResourceReferenceFactory $resourceReferenceFactory,
+        private ResourceReferenceFactory $resourceReferenceFactory,
     ) {
     }
 
