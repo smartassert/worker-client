@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Model;
 
-class Job
+readonly class Job
 {
     /**
      * @param positive-int        $maximumDurationInSeconds
@@ -15,13 +15,13 @@ class Job
      * @param positive-int[]      $eventIds
      */
     public function __construct(
-        public readonly ResourceReference $reference,
-        public readonly int $maximumDurationInSeconds,
-        public readonly array $testPaths,
-        public readonly array $sources,
-        public readonly array $tests,
-        public readonly array $relatedReferences,
-        public readonly array $eventIds,
+        public ResourceReference $reference,
+        public int $maximumDurationInSeconds,
+        public array $testPaths,
+        public array $sources,
+        public array $tests,
+        public array $relatedReferences,
+        public array $eventIds,
     ) {
     }
 }
