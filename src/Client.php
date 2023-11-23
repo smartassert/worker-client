@@ -11,6 +11,7 @@ use SmartAssert\ServiceClient\Exception\InvalidModelDataException;
 use SmartAssert\ServiceClient\Exception\InvalidResponseDataException;
 use SmartAssert\ServiceClient\Exception\InvalidResponseTypeException;
 use SmartAssert\ServiceClient\Exception\NonSuccessResponseException;
+use SmartAssert\ServiceClient\Exception\UnauthorizedException;
 use SmartAssert\ServiceClient\Payload\UrlEncodedPayload;
 use SmartAssert\ServiceClient\Request;
 use SmartAssert\ServiceClient\Response\JsonResponse;
@@ -36,6 +37,7 @@ readonly class Client
      * @throws ClientExceptionInterface
      * @throws InvalidResponseDataException
      * @throws InvalidResponseTypeException
+     * @throws UnauthorizedException
      */
     public function getApplicationState(): ApplicationState
     {
@@ -69,6 +71,7 @@ readonly class Client
      * @throws NonSuccessResponseException
      * @throws InvalidModelDataException
      * @throws InvalidResponseTypeException
+     * @throws UnauthorizedException
      */
     public function getEvent(int $id): ?Event
     {
@@ -102,6 +105,7 @@ readonly class Client
      * @throws NonSuccessResponseException
      * @throws InvalidResponseTypeException
      * @throws JobCreationException
+     * @throws UnauthorizedException
      */
     public function createJob(
         string $label,
@@ -154,6 +158,7 @@ readonly class Client
      * @throws InvalidResponseDataException
      * @throws NonSuccessResponseException
      * @throws InvalidResponseTypeException
+     * @throws UnauthorizedException
      */
     public function getJob(): ?Job
     {
