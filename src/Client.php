@@ -45,10 +45,6 @@ readonly class Client
             new Request('GET', $this->createUrl('/application_state'))
         );
 
-        if (!$response->isSuccessful()) {
-            throw new NonSuccessResponseException($response->getHttpResponse());
-        }
-
         if (!$response instanceof JsonResponse) {
             throw InvalidResponseTypeException::create($response, JsonResponse::class);
         }
@@ -78,10 +74,6 @@ readonly class Client
         $response = $this->serviceClient->sendRequest(
             new Request('GET', $this->createUrl('/event/' . $id))
         );
-
-        if (!$response->isSuccessful()) {
-            throw new NonSuccessResponseException($response->getHttpResponse());
-        }
 
         if (!$response instanceof JsonResponse) {
             throw InvalidResponseTypeException::create($response, JsonResponse::class);
@@ -113,31 +105,33 @@ readonly class Client
         int $maximumDurationInSeconds,
         string $serializedJobSource
     ): Job {
-        $response = $this->serviceClient->sendRequest(
-            (new Request('POST', $this->createUrl('/job')))
-                ->withPayload(new UrlEncodedPayload([
-                    'label' => $label,
-                    'results_token' => $resultsToken,
-                    'maximum_duration_in_seconds' => $maximumDurationInSeconds,
-                    'source' => $serializedJobSource,
-                ]))
-        );
+        try {
+            $response = $this->serviceClient->sendRequest(
+                (new Request('POST', $this->createUrl('/job')))
+                    ->withPayload(new UrlEncodedPayload([
+                        'label' => $label,
+                        'results_token' => $resultsToken,
+                        'maximum_duration_in_seconds' => $maximumDurationInSeconds,
+                        'source' => $serializedJobSource,
+                    ]))
+            );
+        } catch (NonSuccessResponseException $e) {
+            $response = $e->getResponse();
 
-        if (400 === $response->getStatusCode()) {
-            if (!$response instanceof JsonResponse) {
-                throw InvalidResponseTypeException::create($response, JsonResponse::class);
+            if (400 === $e->getStatusCode()) {
+                if (!$response instanceof JsonResponse) {
+                    throw InvalidResponseTypeException::create($response, JsonResponse::class);
+                }
+
+                $jobCreationError = $this->createJobCreationErrorModel(new ArrayInspector($response->getData()));
+                if (null === $jobCreationError) {
+                    throw InvalidModelDataException::fromJsonResponse(JobCreationException::class, $response);
+                }
+
+                throw $jobCreationError;
             }
 
-            $jobCreationError = $this->createJobCreationErrorModel(new ArrayInspector($response->getData()));
-            if (null === $jobCreationError) {
-                throw InvalidModelDataException::fromJsonResponse(JobCreationException::class, $response);
-            }
-
-            throw $jobCreationError;
-        }
-
-        if (200 !== $response->getStatusCode()) {
-            throw new NonSuccessResponseException($response->getHttpResponse());
+            throw $e;
         }
 
         if (!$response instanceof JsonResponse) {
@@ -162,16 +156,16 @@ readonly class Client
      */
     public function getJob(): ?Job
     {
-        $response = $this->serviceClient->sendRequest(
-            new Request('GET', $this->createUrl('/job'))
-        );
-
-        if (200 !== $response->getStatusCode()) {
-            if (400 === $response->getStatusCode()) {
+        try {
+            $response = $this->serviceClient->sendRequest(
+                new Request('GET', $this->createUrl('/job'))
+            );
+        } catch (NonSuccessResponseException $e) {
+            if (400 === $e->getStatusCode()) {
                 return null;
             }
 
-            throw new NonSuccessResponseException($response->getHttpResponse());
+            throw $e;
         }
 
         if (!$response instanceof JsonResponse) {
