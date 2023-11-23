@@ -65,7 +65,7 @@ abstract class AbstractClientTestCase extends TestCase
 
             self::fail(NonSuccessResponseException::class . ' not thrown');
         } catch (NonSuccessResponseException $e) {
-            self::assertSame($httpFixture, $e->response);
+            self::assertSame($httpFixture, $e->getHttpResponse());
         }
     }
 
@@ -81,7 +81,7 @@ abstract class AbstractClientTestCase extends TestCase
             self::fail(InvalidModelDataException::class . ' not thrown');
         } catch (InvalidModelDataException $e) {
             self::assertSame($this->getExpectedModelClass(), $e->class);
-            self::assertSame($response, $e->response);
+            self::assertSame($response, $e->getHttpResponse());
             self::assertSame($responsePayload, $e->payload);
         }
     }
