@@ -41,13 +41,9 @@ readonly class Client
      */
     public function getApplicationState(): ApplicationState
     {
-        $response = $this->serviceClient->sendRequest(
+        $response = $this->serviceClient->sendRequestForJson(
             new Request('GET', $this->createUrl('/application_state'))
         );
-
-        if (!$response instanceof JsonResponse) {
-            throw InvalidResponseTypeException::create($response, JsonResponse::class);
-        }
 
         $responseDataInspector = new ArrayInspector($response->getData());
 
@@ -71,13 +67,9 @@ readonly class Client
      */
     public function getEvent(int $id): ?Event
     {
-        $response = $this->serviceClient->sendRequest(
+        $response = $this->serviceClient->sendRequestForJson(
             new Request('GET', $this->createUrl('/event/' . $id))
         );
-
-        if (!$response instanceof JsonResponse) {
-            throw InvalidResponseTypeException::create($response, JsonResponse::class);
-        }
 
         $event = $this->eventFactory->create(new ArrayInspector($response->getData()));
         if (null === $event) {
@@ -106,7 +98,7 @@ readonly class Client
         string $serializedJobSource
     ): Job {
         try {
-            $response = $this->serviceClient->sendRequest(
+            $response = $this->serviceClient->sendRequestForJson(
                 (new Request('POST', $this->createUrl('/job')))
                     ->withPayload(new UrlEncodedPayload([
                         'label' => $label,
@@ -134,10 +126,6 @@ readonly class Client
             throw $e;
         }
 
-        if (!$response instanceof JsonResponse) {
-            throw InvalidResponseTypeException::create($response, JsonResponse::class);
-        }
-
         $job = $this->jobFactory->create(new ArrayInspector($response->getData()));
         if (null === $job) {
             throw InvalidModelDataException::fromJsonResponse(Job::class, $response);
@@ -157,7 +145,7 @@ readonly class Client
     public function getJob(): ?Job
     {
         try {
-            $response = $this->serviceClient->sendRequest(
+            $response = $this->serviceClient->sendRequestForJson(
                 new Request('GET', $this->createUrl('/job'))
             );
         } catch (NonSuccessResponseException $e) {
@@ -166,10 +154,6 @@ readonly class Client
             }
 
             throw $e;
-        }
-
-        if (!$response instanceof JsonResponse) {
-            throw InvalidResponseTypeException::create($response, JsonResponse::class);
         }
 
         $job = $this->jobFactory->create(new ArrayInspector($response->getData()));
