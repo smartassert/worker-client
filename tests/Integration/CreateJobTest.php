@@ -30,7 +30,7 @@ class CreateJobTest extends AbstractIntegrationTestCase
 
         $serviceClient = (new ServiceClientFactory())->create();
         $resultsClient = (new ResultsClientFactory($serviceClient))->create();
-        $apiTokenFactory = new ApiTokenFactory($serviceClient);
+        $apiTokenFactory = new ApiTokenFactory();
         $jobLabelFactory = new JobLabelFactory();
 
         self::$resultsJob = $resultsClient->createJob($apiTokenFactory->create(), $jobLabelFactory->create());

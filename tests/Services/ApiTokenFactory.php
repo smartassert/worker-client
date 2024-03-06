@@ -4,28 +4,28 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Tests\Services;
 
-use SmartAssert\ServiceClient\Client as ServiceClient;
+use GuzzleHttp\Client as HttpClient;
 use SmartAssert\TestAuthenticationProviderBundle\ApiKeyProvider;
 use SmartAssert\TestAuthenticationProviderBundle\ApiTokenProvider;
 use SmartAssert\TestAuthenticationProviderBundle\FrontendTokenProvider;
-use SmartAssert\UsersClient\Client as UsersClient;
 
 class ApiTokenFactory
 {
-    public function __construct(
-        private readonly ServiceClient $serviceClient,
-    ) {
-    }
-
     /**
      * @return non-empty-string
      */
     public function create(): string
     {
-        $usersClient = new UsersClient('http://localhost:9080', $this->serviceClient);
-        $frontendTokenProvider = new FrontendTokenProvider(['user@example.com' => 'password'], $usersClient);
-        $apiKeyProvider = new ApiKeyProvider($usersClient, $frontendTokenProvider);
-        $apiTokenProvider = new ApiTokenProvider($usersClient, $apiKeyProvider);
+        $usersBaseUrl = 'http://localhost:9080';
+        $httpClient = new HttpClient();
+
+        $frontendTokenProvider = new FrontendTokenProvider(
+            ['user@example.com' => 'password'],
+            $usersBaseUrl,
+            $httpClient
+        );
+        $apiKeyProvider = new ApiKeyProvider($usersBaseUrl, $httpClient, $frontendTokenProvider);
+        $apiTokenProvider = new ApiTokenProvider($usersBaseUrl, $httpClient, $apiKeyProvider);
 
         return $apiTokenProvider->get('user@example.com');
     }

@@ -31,7 +31,7 @@
         ],
         "users-generate-jwt-keys": "docker compose -f tests/build/docker-compose.yml exec -T users-service php bin/console lexik:jwt:generate-keypair --overwrite --no-interaction",
         "users-create-user": [
-            "curl --header 'Authorization: primary_admin_token' --data 'email=user@example.com&password=password' http://localhost:9080/user/create",
+            "curl --header 'Authorization: primary_admin_token' --data 'identifier=user@example.com&password=password' http://localhost:9080/create",
             ""
         ],
         "users-setup": [
@@ -86,7 +86,7 @@
         "phpstan/phpstan-phpunit": "^1.3",
         "smartassert/worker-job-source": "^0.2.0",
         "smartassert/results-client": "^7.1",
-        "smartassert/test-authenticaton-provider-bundle": "^3.0",
+        "smartassert/test-authenticaton-provider-bundle": "^5.0",
         "symfony/uid": "^6.2"
     },
     "minimum-stability":"dev",
