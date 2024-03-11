@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Model;
 
-readonly class Job
+readonly class Job implements JobInterface
 {
     /**
      * @param positive-int        $maximumDurationInSeconds
@@ -23,5 +23,40 @@ readonly class Job
         public array $relatedReferences,
         public array $eventIds,
     ) {
+    }
+
+    public function getReference(): ResourceReference
+    {
+        return $this->reference;
+    }
+
+    public function getMaximumDurationInSeconds(): int
+    {
+        return $this->maximumDurationInSeconds;
+    }
+
+    public function getTestPaths(): array
+    {
+        return $this->testPaths;
+    }
+
+    public function getSources(): array
+    {
+        return $this->sources;
+    }
+
+    public function getTests(): array
+    {
+        return $this->tests;
+    }
+
+    public function getRelatedReferences(): array
+    {
+        return $this->relatedReferences;
+    }
+
+    public function getEventIds(): array
+    {
+        return $this->eventIds;
     }
 }

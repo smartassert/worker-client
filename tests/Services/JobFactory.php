@@ -10,8 +10,8 @@ use SmartAssert\ServiceClient\Exception\InvalidResponseDataException;
 use SmartAssert\ServiceClient\Exception\InvalidResponseTypeException;
 use SmartAssert\ServiceClient\Exception\NonSuccessResponseException;
 use SmartAssert\WorkerClient\Client;
-use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\JobCreationException;
+use SmartAssert\WorkerClient\Model\JobInterface;
 use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
 use SmartAssert\WorkerJobSource\Model\JobSource;
 use SmartAssert\WorkerJobSource\Model\Manifest;
@@ -33,7 +33,7 @@ class JobFactory
      * @throws NonSuccessResponseException
      * @throws SerializeException
      */
-    public function create(JobCreationProperties $jobCreationProperties): Job
+    public function create(JobCreationProperties $jobCreationProperties): JobInterface
     {
         $jobSource = new JobSource(
             new Manifest($jobCreationProperties->manifestPaths),
