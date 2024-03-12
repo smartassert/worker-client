@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient;
 
-use Psr\Http\Client\ClientExceptionInterface;
 use SmartAssert\ArrayInspector\ArrayInspector;
 use SmartAssert\ServiceClient\Client as ServiceClient;
 use SmartAssert\ServiceClient\Exception\InvalidModelDataException;
-use SmartAssert\ServiceClient\Exception\InvalidResponseDataException;
 use SmartAssert\ServiceClient\Exception\InvalidResponseTypeException;
 use SmartAssert\ServiceClient\Exception\NonSuccessResponseException;
-use SmartAssert\ServiceClient\Exception\UnauthorizedException;
 use SmartAssert\ServiceClient\Payload\UrlEncodedPayload;
 use SmartAssert\ServiceClient\Request;
 use SmartAssert\ServiceClient\Response\JsonResponse;
@@ -22,7 +19,7 @@ use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\JobCreationException;
 use SmartAssert\WorkerClient\Model\JobInterface;
 
-readonly class Client
+readonly class Client implements ClientInterface
 {
     public function __construct(
         private string $baseUrl,
@@ -32,14 +29,6 @@ readonly class Client
     ) {
     }
 
-    /**
-     * @throws InvalidModelDataException
-     * @throws NonSuccessResponseException
-     * @throws ClientExceptionInterface
-     * @throws InvalidResponseDataException
-     * @throws InvalidResponseTypeException
-     * @throws UnauthorizedException
-     */
     public function getApplicationState(): ApplicationState
     {
         $response = $this->serviceClient->sendRequestForJson(
@@ -56,16 +45,6 @@ readonly class Client
         return $applicationState;
     }
 
-    /**
-     * @param positive-int $id
-     *
-     * @throws ClientExceptionInterface
-     * @throws InvalidResponseDataException
-     * @throws NonSuccessResponseException
-     * @throws InvalidModelDataException
-     * @throws InvalidResponseTypeException
-     * @throws UnauthorizedException
-     */
     public function getEvent(int $id): ?Event
     {
         $response = $this->serviceClient->sendRequestForJson(
@@ -80,18 +59,6 @@ readonly class Client
         return $event;
     }
 
-    /**
-     * @param non-empty-string $label
-     * @param positive-int     $maximumDurationInSeconds
-     *
-     * @throws ClientExceptionInterface
-     * @throws InvalidModelDataException
-     * @throws InvalidResponseDataException
-     * @throws NonSuccessResponseException
-     * @throws InvalidResponseTypeException
-     * @throws JobCreationException
-     * @throws UnauthorizedException
-     */
     public function createJob(
         string $label,
         string $resultsToken,
@@ -135,14 +102,6 @@ readonly class Client
         return $job;
     }
 
-    /**
-     * @throws ClientExceptionInterface
-     * @throws InvalidModelDataException
-     * @throws InvalidResponseDataException
-     * @throws NonSuccessResponseException
-     * @throws InvalidResponseTypeException
-     * @throws UnauthorizedException
-     */
     public function getJob(): ?JobInterface
     {
         try {
