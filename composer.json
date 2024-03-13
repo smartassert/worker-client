@@ -74,7 +74,7 @@
         "psr/http-factory": "^1.0",
         "smartassert/service-client": "^7.1",
         "smartassert/array-inspector": ">=0.4,<1",
-        "smartassert/yaml-file": "^5.0"
+        "smartassert/yaml-file": "^8.0"
     },
     "require-dev": {
         "ext-pdo": "*",
@@ -84,10 +84,10 @@
         "guzzlehttp/guzzle": "^7.5",
         "phpstan/extension-installer": "^1.2",
         "phpstan/phpstan-phpunit": "^1.3",
-        "smartassert/worker-job-source": "^0.2.0",
+        "smartassert/worker-job-source": "^3.0",
         "smartassert/results-client": "^7.1",
         "smartassert/test-authenticaton-provider-bundle": "^5.0",
-        "symfony/uid": "^6.4"
+        "symfony/uid": "^7.0"
     },
     "minimum-stability":"dev",
     "prefer-stable":true,
