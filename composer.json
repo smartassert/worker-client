@@ -87,7 +87,7 @@
         "smartassert/worker-job-source": "^0.2.0",
         "smartassert/results-client": "^7.1",
         "smartassert/test-authenticaton-provider-bundle": "^5.0",
-        "symfony/uid": "^6.2"
+        "symfony/uid": "^6.4"
     },
     "minimum-stability":"dev",
     "prefer-stable":true,
