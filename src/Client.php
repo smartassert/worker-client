@@ -20,7 +20,6 @@ use SmartAssert\WorkerClient\Model\ComponentState;
 use SmartAssert\WorkerClient\Model\Event;
 use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\JobCreationException;
-use SmartAssert\WorkerClient\Model\JobInterface;
 
 readonly class Client
 {
@@ -97,7 +96,7 @@ readonly class Client
         string $resultsToken,
         int $maximumDurationInSeconds,
         string $serializedJobSource
-    ): JobInterface {
+    ): Job {
         try {
             $response = $this->serviceClient->sendRequestForJson(
                 (new Request('POST', $this->createUrl('/job')))
@@ -143,7 +142,7 @@ readonly class Client
      * @throws InvalidResponseTypeException
      * @throws UnauthorizedException
      */
-    public function getJob(): ?JobInterface
+    public function getJob(): ?Job
     {
         try {
             $response = $this->serviceClient->sendRequestForJson(

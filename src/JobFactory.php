@@ -6,7 +6,6 @@ namespace SmartAssert\WorkerClient;
 
 use SmartAssert\ArrayInspector\ArrayInspector;
 use SmartAssert\WorkerClient\Model\Job;
-use SmartAssert\WorkerClient\Model\JobInterface;
 use SmartAssert\WorkerClient\Model\ResourceReference;
 use SmartAssert\WorkerClient\Model\Test;
 
@@ -18,7 +17,7 @@ readonly class JobFactory
     ) {
     }
 
-    public function create(ArrayInspector $data): ?JobInterface
+    public function create(ArrayInspector $data): ?Job
     {
         $reference = $this->resourceReferenceFactory->create($data);
         $maximumDurationInSeconds = $data->getPositiveInteger('maximum_duration_in_seconds');
