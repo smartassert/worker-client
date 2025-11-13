@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Tests\Integration;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use SmartAssert\WorkerClient\Model\Event;
 use SmartAssert\WorkerClient\Model\ResourceReference;
 use SmartAssert\WorkerClient\Tests\Services\WorkerEventFactory;
@@ -32,12 +33,11 @@ class GetEventTest extends AbstractIntegrationTestCase
     }
 
     /**
-     * @dataProvider getEventDataProvider
-     *
      * @phpstan-param SerializedResourceReference $eventReferenceData
      * @phpstan-param SerializedResourceReference[] $relatedReferenceDataCollection
      * @phpstan-param SerializedEvent $eventData
      */
+    #[DataProvider('getEventDataProvider')]
     public function testGetEventSuccess(
         array $eventReferenceData,
         array $relatedReferenceDataCollection,

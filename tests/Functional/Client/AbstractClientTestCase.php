@@ -7,6 +7,7 @@ namespace SmartAssert\WorkerClient\Tests\Functional\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -37,11 +38,10 @@ abstract class AbstractClientTestCase extends TestCase
     }
 
     /**
-     * @dataProvider networkErrorExceptionDataProvider
-     * @dataProvider invalidJsonResponseExceptionDataProvider
-     *
      * @param class-string<\Throwable> $expectedExceptionClass
      */
+    #[DataProvider('networkErrorExceptionDataProvider')]
+    #[DataProvider('invalidJsonResponseExceptionDataProvider')]
     public function testClientActionThrowsException(
         ClientExceptionInterface|ResponseInterface $httpFixture,
         string $expectedExceptionClass,
@@ -53,9 +53,7 @@ abstract class AbstractClientTestCase extends TestCase
         ($this->createClientActionCallable())();
     }
 
-    /**
-     * @dataProvider commonNonSuccessResponseDataProvider
-     */
+    #[DataProvider('commonNonSuccessResponseDataProvider')]
     public function testClientActionThrowsNonSuccessResponseException(ResponseInterface $httpFixture): void
     {
         $this->mockHandler->append($httpFixture);

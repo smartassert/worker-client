@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Tests\Integration;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use SmartAssert\ResultsClient\Model\Job as ResultsJob;
 use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\JobCreationException;
@@ -74,11 +75,10 @@ class CreateJobTest extends AbstractIntegrationTestCase
     }
 
     /**
-     * @dataProvider createJobSuccessDataProvider
-     *
      * @param callable(ResultsJob): JobCreationProperties $jobCreationPropertiesCreator
      * @param callable(JobCreationProperties): Job        $expectedJobCreator
      */
+    #[DataProvider('createJobSuccessDataProvider')]
     public function testCreateJobSuccess(
         callable $jobCreationPropertiesCreator,
         callable $expectedJobCreator,

@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace SmartAssert\WorkerClient\Tests\Functional\Client;
 
 use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\Attributes\DataProvider;
 use SmartAssert\WorkerClient\Model\ApplicationState;
 use SmartAssert\WorkerClient\Model\ComponentState;
 
 class GetApplicationStateTest extends AbstractClientTestCase
 {
     /**
-     * @dataProvider getApplicationStateDataProvider
-     *
      * @param array{
      *     application: non-empty-string,
      *     compilation: non-empty-string,
@@ -20,6 +19,7 @@ class GetApplicationStateTest extends AbstractClientTestCase
      *     event_delivery: non-empty-string
      * } $responseData
      */
+    #[DataProvider('getApplicationStateDataProvider')]
     public function testGetApplicationState(array $responseData, ApplicationState $expected): void
     {
         $this->mockHandler->append(new Response(
