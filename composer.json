@@ -82,7 +82,7 @@
         "phpstan/extension-installer": "^1.2",
         "phpstan/phpstan": "^1.9",
         "phpstan/phpstan-phpunit": "^1.3",
-        "phpunit/phpunit": "^11",
+        "phpunit/phpunit": "^12",
         "smartassert/results-client": "^7.1",
         "smartassert/test-authenticaton-provider-bundle": "^5.0",
         "smartassert/worker-job-source": "^3.0",
