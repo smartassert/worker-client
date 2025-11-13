@@ -12,11 +12,11 @@ use SmartAssert\WorkerClient\Model\ResourceReference;
 use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
 use SmartAssert\WorkerClient\Tests\Services\ApiTokenFactory;
 use SmartAssert\WorkerClient\Tests\Services\JobFactory;
-use SmartAssert\WorkerClient\Tests\Services\JobLabelFactory;
 use SmartAssert\WorkerClient\Tests\Services\ResultsClientFactory;
 use SmartAssert\WorkerClient\Tests\Services\ServiceClientFactory;
 use SmartAssert\YamlFile\Collection\ArrayCollection;
 use SmartAssert\YamlFile\YamlFile;
+use Symfony\Component\Uid\Ulid;
 
 class CreateJobTest extends AbstractIntegrationTestCase
 {
@@ -32,9 +32,8 @@ class CreateJobTest extends AbstractIntegrationTestCase
         $serviceClient = (new ServiceClientFactory())->create();
         $resultsClient = (new ResultsClientFactory($serviceClient))->create();
         $apiTokenFactory = new ApiTokenFactory();
-        $jobLabelFactory = new JobLabelFactory();
 
-        self::$resultsJob = $resultsClient->createJob($apiTokenFactory->create(), $jobLabelFactory->create());
+        self::$resultsJob = $resultsClient->createJob($apiTokenFactory->create(), (string) new Ulid());
     }
 
     public function testCreateJobSourceTestMissing(): void
