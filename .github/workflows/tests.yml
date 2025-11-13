@@ -31,5 +31,5 @@ jobs:
 
       - name: Run integration tests
         run: |
-          docker-compose -f ./tests/build/docker-compose.yml exec -T worker-service chown www-data /app/source
+          docker compose -f ./tests/build/docker-compose.yml exec -T worker-service chown www-data /app/source
           composer test
