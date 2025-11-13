@@ -81,6 +81,7 @@
         "guzzlehttp/guzzle": "^7.10",
         "phpstan/extension-installer": "^1.2",
         "phpstan/phpstan": "^1.9",
+        "phpstan/phpstan-deprecation-rules": "^1.2",
         "phpstan/phpstan-phpunit": "^1.3",
         "phpunit/phpunit": "^12",
         "smartassert/results-client": "^7.1",
