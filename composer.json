@@ -74,7 +74,7 @@
         "psr/http-message": "^1.0",
         "smartassert/array-inspector": ">=0.4,<1",
         "smartassert/service-client": "^8",
-        "smartassert/yaml-file": "^8.0"
+        "smartassert/yaml-file": "^9.0"
     },
     "require-dev": {
         "ext-pdo": "*",
@@ -86,7 +86,7 @@
         "phpunit/phpunit": "^12",
         "smartassert/results-client": "^9.0",
         "smartassert/test-authenticaton-provider-bundle": "^5.0",
-        "smartassert/worker-job-source": "^3.0",
+        "smartassert/worker-job-source": "^6.0",
         "squizlabs/php_codesniffer": "^4.0",
         "symfony/uid": "^7.3"
     },
