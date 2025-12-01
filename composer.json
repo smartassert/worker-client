@@ -86,7 +86,7 @@
         "phpunit/phpunit": "^12",
         "smartassert/results-client": "^9.0",
         "smartassert/test-authenticaton-provider-bundle": "^5.0",
-        "smartassert/worker-job-source": "^6.0",
+        "smartassert/worker-job-source": "^6.0 || ^7.0",
         "squizlabs/php_codesniffer": "^4.0",
         "symfony/uid": "*"
     },
