@@ -23,6 +23,5 @@ readonly class Test
         public array $stepNames,
         public string $state,
         public int $position,
-    ) {
-    }
+    ) {}
 }

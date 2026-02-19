@@ -10,8 +10,7 @@ class TestFactory
 {
     public function __construct(
         private readonly DataRepository $dataRepository,
-    ) {
-    }
+    ) {}
 
     public function createFromModel(Test $test): int
     {

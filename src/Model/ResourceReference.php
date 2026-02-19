@@ -13,6 +13,5 @@ readonly class ResourceReference
     public function __construct(
         public string $label,
         public string $reference,
-    ) {
-    }
+    ) {}
 }

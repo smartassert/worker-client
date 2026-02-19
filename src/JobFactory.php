@@ -14,8 +14,7 @@ readonly class JobFactory
     public function __construct(
         private ResourceReferenceFactory $resourceReferenceFactory,
         private TestFactory $testFactory,
-    ) {
-    }
+    ) {}
 
     public function create(ArrayInspector $data): ?Job
     {

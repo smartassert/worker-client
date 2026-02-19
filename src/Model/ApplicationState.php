@@ -11,6 +11,5 @@ readonly class ApplicationState
         public ComponentState $compilationState,
         public ComponentState $executionState,
         public ComponentState $eventDeliveryState,
-    ) {
-    }
+    ) {}
 }

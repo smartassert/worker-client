@@ -12,8 +12,7 @@ readonly class EventFactory
 {
     public function __construct(
         private ResourceReferenceFactory $resourceReferenceFactory,
-    ) {
-    }
+    ) {}
 
     public function create(ArrayInspector $data): ?Event
     {

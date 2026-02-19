@@ -22,6 +22,5 @@ readonly class Job
         public array $tests,
         public array $relatedReferences,
         public array $eventIds,
-    ) {
-    }
+    ) {}
 }

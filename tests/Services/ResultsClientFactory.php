@@ -13,8 +13,7 @@ class ResultsClientFactory
 {
     public function __construct(
         private readonly ServiceClient $serviceClient,
-    ) {
-    }
+    ) {}
 
     public function create(): ResultsClient
     {
