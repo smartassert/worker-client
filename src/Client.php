@@ -20,6 +20,7 @@ use SmartAssert\WorkerClient\Model\ComponentState;
 use SmartAssert\WorkerClient\Model\Event;
 use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\JobCreationException;
+use SmartAssert\WorkerClient\Model\MetaState;
 
 readonly class Client
 {
@@ -213,13 +214,27 @@ readonly class Client
             return null;
         }
 
-        $isEndState = $data['is_end_state'] ?? null;
-        $isEndState = is_bool($isEndState) ? $isEndState : null;
+        $metaStateData = $data['meta_state'] ?? null;
+        $metaStateData = is_array($metaStateData) ? $metaStateData : null;
 
-        if (null === $isEndState) {
+        if (null === $metaStateData) {
             return null;
         }
 
-        return new ComponentState($state, $isEndState);
+        $metaStateEnded = $metaStateData['ended'] ?? null;
+        $metaStateEnded = is_bool($metaStateEnded) ? $metaStateEnded : null;
+
+        if (null === $metaStateEnded) {
+            return null;
+        }
+
+        $metaStateSucceeded = $metaStateData['succeeded'] ?? null;
+        $metaStateSucceeded = is_bool($metaStateSucceeded) ? $metaStateSucceeded : null;
+
+        if (null === $metaStateSucceeded) {
+            return null;
+        }
+
+        return new ComponentState($state, new MetaState($metaStateEnded, $metaStateSucceeded));
     }
 }

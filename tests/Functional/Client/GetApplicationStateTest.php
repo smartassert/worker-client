@@ -8,6 +8,7 @@ use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\Attributes\DataProvider;
 use SmartAssert\WorkerClient\Model\ApplicationState;
 use SmartAssert\WorkerClient\Model\ComponentState;
+use SmartAssert\WorkerClient\Model\MetaState;
 
 class GetApplicationStateTest extends AbstractClientTestCase
 {
@@ -41,130 +42,190 @@ class GetApplicationStateTest extends AbstractClientTestCase
                 'responseData' => [
                     'application' => [
                         'state' => 'awaiting-job',
-                        'is_end_state' => false,
+                        'meta_state' => [
+                            'ended' => false,
+                            'succeeded' => false,
+                        ],
                     ],
                     'compilation' => [
                         'state' => 'awaiting',
-                        'is_end_state' => false,
+                        'meta_state' => [
+                            'ended' => false,
+                            'succeeded' => false,
+                        ],
                     ],
                     'execution' => [
                         'state' => 'awaiting',
-                        'is_end_state' => false,
+                        'meta_state' => [
+                            'ended' => false,
+                            'succeeded' => false,
+                        ],
                     ],
                     'event_delivery' => [
                         'state' => 'awaiting',
-                        'is_end_state' => false,
+                        'meta_state' => [
+                            'ended' => false,
+                            'succeeded' => false,
+                        ],
                     ],
                 ],
                 'expected' => new ApplicationState(
-                    new ComponentState('awaiting-job', false),
-                    new ComponentState('awaiting', false),
-                    new ComponentState('awaiting', false),
-                    new ComponentState('awaiting', false),
+                    new ComponentState('awaiting-job', new MetaState(false, false)),
+                    new ComponentState('awaiting', new MetaState(false, false)),
+                    new ComponentState('awaiting', new MetaState(false, false)),
+                    new ComponentState('awaiting', new MetaState(false, false)),
                 ),
             ],
             'compiling' => [
                 'responseData' => [
                     'application' => [
                         'state' => 'compiling',
-                        'is_end_state' => false,
+                        'meta_state' => [
+                            'ended' => false,
+                            'succeeded' => false,
+                        ],
                     ],
                     'compilation' => [
                         'state' => 'running',
-                        'is_end_state' => false,
+                        'meta_state' => [
+                            'ended' => false,
+                            'succeeded' => false,
+                        ],
                     ],
                     'execution' => [
                         'state' => 'awaiting',
-                        'is_end_state' => false,
+                        'meta_state' => [
+                            'ended' => false,
+                            'succeeded' => false,
+                        ],
                     ],
                     'event_delivery' => [
                         'state' => 'running',
-                        'is_end_state' => false,
+                        'meta_state' => [
+                            'ended' => false,
+                            'succeeded' => false,
+                        ],
                     ],
                 ],
                 'expected' => new ApplicationState(
-                    new ComponentState('compiling', false),
-                    new ComponentState('running', false),
-                    new ComponentState('awaiting', false),
-                    new ComponentState('running', false),
+                    new ComponentState('compiling', new MetaState(false, false)),
+                    new ComponentState('running', new MetaState(false, false)),
+                    new ComponentState('awaiting', new MetaState(false, false)),
+                    new ComponentState('running', new MetaState(false, false)),
                 ),
             ],
             'executing' => [
                 'responseData' => [
                     'application' => [
                         'state' => 'executing',
-                        'is_end_state' => false,
+                        'meta_state' => [
+                            'ended' => false,
+                            'succeeded' => false,
+                        ],
                     ],
                     'compilation' => [
                         'state' => 'complete',
-                        'is_end_state' => true,
+                        'meta_state' => [
+                            'ended' => true,
+                            'succeeded' => true,
+                        ],
                     ],
                     'execution' => [
                         'state' => 'running',
-                        'is_end_state' => false,
+                        'meta_state' => [
+                            'ended' => false,
+                            'succeeded' => false,
+                        ],
                     ],
                     'event_delivery' => [
                         'state' => 'running',
-                        'is_end_state' => false,
+                        'meta_state' => [
+                            'ended' => false,
+                            'succeeded' => false,
+                        ],
                     ],
                 ],
                 'expected' => new ApplicationState(
-                    new ComponentState('executing', false),
-                    new ComponentState('complete', true),
-                    new ComponentState('running', false),
-                    new ComponentState('running', false),
+                    new ComponentState('executing', new MetaState(false, false)),
+                    new ComponentState('complete', new MetaState(true, true)),
+                    new ComponentState('running', new MetaState(false, false)),
+                    new ComponentState('running', new MetaState(false, false)),
                 ),
             ],
             'complete, awaiting event delivery completion' => [
                 'responseData' => [
                     'application' => [
                         'state' => 'completing-event-delivery',
-                        'is_end_state' => false,
+                        'meta_state' => [
+                            'ended' => false,
+                            'succeeded' => false,
+                        ],
                     ],
                     'compilation' => [
                         'state' => 'complete',
-                        'is_end_state' => true,
+                        'meta_state' => [
+                            'ended' => true,
+                            'succeeded' => true,
+                        ],
                     ],
                     'execution' => [
                         'state' => 'complete',
-                        'is_end_state' => true,
+                        'meta_state' => [
+                            'ended' => true,
+                            'succeeded' => true,
+                        ],
                     ],
                     'event_delivery' => [
                         'state' => 'running',
-                        'is_end_state' => false,
+                        'meta_state' => [
+                            'ended' => false,
+                            'succeeded' => false,
+                        ],
                     ],
                 ],
                 'expected' => new ApplicationState(
-                    new ComponentState('completing-event-delivery', false),
-                    new ComponentState('complete', true),
-                    new ComponentState('complete', true),
-                    new ComponentState('running', false),
+                    new ComponentState('completing-event-delivery', new MetaState(false, false)),
+                    new ComponentState('complete', new MetaState(true, true)),
+                    new ComponentState('complete', new MetaState(true, true)),
+                    new ComponentState('running', new MetaState(false, false)),
                 ),
             ],
             'complete' => [
                 'responseData' => [
                     'application' => [
                         'state' => 'complete',
-                        'is_end_state' => true,
+                        'meta_state' => [
+                            'ended' => true,
+                            'succeeded' => true,
+                        ],
                     ],
                     'compilation' => [
                         'state' => 'complete',
-                        'is_end_state' => true,
+                        'meta_state' => [
+                            'ended' => true,
+                            'succeeded' => true,
+                        ],
                     ],
                     'execution' => [
                         'state' => 'complete',
-                        'is_end_state' => true,
+                        'meta_state' => [
+                            'ended' => true,
+                            'succeeded' => true,
+                        ],
                     ],
                     'event_delivery' => [
                         'state' => 'complete',
-                        'is_end_state' => true,
+                        'meta_state' => [
+                            'ended' => true,
+                            'succeeded' => true,
+                        ],
                     ],
                 ],
                 'expected' => new ApplicationState(
-                    new ComponentState('complete', true),
-                    new ComponentState('complete', true),
-                    new ComponentState('complete', true),
-                    new ComponentState('complete', true),
+                    new ComponentState('complete', new MetaState(true, true)),
+                    new ComponentState('complete', new MetaState(true, true)),
+                    new ComponentState('complete', new MetaState(true, true)),
+                    new ComponentState('complete', new MetaState(true, true)),
                 ),
             ],
         ];
