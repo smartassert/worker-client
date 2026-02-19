@@ -28,8 +28,7 @@ readonly class Client
         private ServiceClient $serviceClient,
         private EventFactory $eventFactory,
         private JobFactory $jobFactory,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws InvalidModelDataException

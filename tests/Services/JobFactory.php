@@ -21,8 +21,7 @@ class JobFactory
 {
     public function __construct(
         private readonly Client $client,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws JobCreationException

@@ -8,8 +8,7 @@ class WorkerEventFactory
 {
     public function __construct(
         private readonly DataRepository $dataRepository,
-    ) {
-    }
+    ) {}
 
     public function createWorkerEventReference(string $label, string $reference): int
     {

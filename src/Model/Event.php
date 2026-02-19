@@ -18,6 +18,5 @@ readonly class Event
         public ResourceReference $resourceReference,
         public array $body,
         public ?array $relatedReferences = null,
-    ) {
-    }
+    ) {}
 }

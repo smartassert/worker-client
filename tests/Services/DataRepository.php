@@ -10,8 +10,7 @@ class DataRepository
 
     public function __construct(
         private readonly string $databaseDsn,
-    ) {
-    }
+    ) {}
 
     public function removeAllData(): void
     {
