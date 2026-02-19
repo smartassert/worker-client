@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SmartAssert\WorkerClient\Tests\Integration;
 
 use SmartAssert\WorkerClient\Model\ComponentState;
+use SmartAssert\WorkerClient\Model\MetaState;
 
 class GetApplicationStateTest extends AbstractIntegrationTestCase
 {
@@ -13,22 +14,22 @@ class GetApplicationStateTest extends AbstractIntegrationTestCase
         $applicationState = self::$client->getApplicationState();
 
         self::assertEquals(
-            new ComponentState('awaiting-job', false),
+            new ComponentState('awaiting-job', false, new MetaState(false, false)),
             $applicationState->applicationState
         );
 
         self::assertEquals(
-            new ComponentState('awaiting', false),
+            new ComponentState('awaiting', false, new MetaState(false, false)),
             $applicationState->compilationState
         );
 
         self::assertEquals(
-            new ComponentState('awaiting', false),
+            new ComponentState('awaiting', false, new MetaState(false, false)),
             $applicationState->executionState
         );
 
         self::assertEquals(
-            new ComponentState('awaiting', false),
+            new ComponentState('awaiting', false, new MetaState(false, false)),
             $applicationState->eventDeliveryState
         );
     }
