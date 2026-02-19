@@ -54,7 +54,7 @@ services:
       - ./http-config/caddy/Caddyfile:/etc/caddy/Caddyfile
 
   worker-service:
-    image: ghcr.io/smartassert/worker:8.0
+    image: ghcr.io/smartassert/worker:9.0
     container_name: worker-service
     environment:
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/worker-db?serverVersion=12&charset=utf8
