@@ -10,18 +10,24 @@ class WorkerEventFactory
         private readonly DataRepository $dataRepository,
     ) {}
 
-    public function createWorkerEventReference(string $label, string $reference): int
+    public function createWorkerEventReference(string $label, string $reference): string
     {
+        $id = md5($label . ':' . $reference);
+
         $statement = $this->dataRepository->getConnection()->prepare(
-            'INSERT INTO worker_event_reference(label, reference) VALUES(:label, :reference)'
+            'INSERT INTO worker_event_reference(label, reference, id) VALUES(:label, :reference, :id)'
         );
 
-        $statement->execute(['label' => $label, 'reference' => $reference]);
+        $statement->execute([
+            'label' => $label,
+            'reference' => $reference,
+            'id' => $id,
+        ]);
 
-        return (int) $this->dataRepository->getConnection()->lastInsertId();
+        return $id;
     }
 
-    public function createWorkerEventReferenceRelation(int $workerEventId, int $referenceId): int
+    public function createWorkerEventReferenceRelation(int $workerEventId, string $referenceId): int
     {
         $statement = $this->dataRepository->getConnection()->prepare('
             INSERT INTO worker_event_worker_event_reference (
@@ -38,12 +44,12 @@ class WorkerEventFactory
 
     /**
      * @param array<mixed> $payload
-     * @param array<int>   $relatedReferenceIds
+     * @param string[]     $relatedReferenceIds
      *
      * @return positive-int
      */
     public function createWorkerEvent(
-        int $referenceId,
+        string $referenceId,
         string $scope,
         string $outcome,
         array $payload,

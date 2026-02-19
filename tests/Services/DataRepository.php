@@ -25,7 +25,7 @@ class DataRepository
 
         $sequenceNames = [
             'worker_event_id_seq',
-            'worker_event_reference_id_seq',
+            //            'worker_event_reference_id_seq',
         ];
 
         foreach ($tableNames as $tableName) {
