@@ -7,7 +7,7 @@ services:
       - "5432:5432"
 
   users-service:
-    image: ghcr.io/smartassert/users:8.0
+    image: ghcr.io/smartassert/users:8.1
     container_name: users-service
     environment:
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/users?serverVersion=12&charset=utf8
@@ -31,7 +31,7 @@ services:
       - ./http-config/caddy/Caddyfile:/etc/caddy/Caddyfile
 
   results-service:
-    image: ghcr.io/smartassert/results:3.0
+    image: ghcr.io/smartassert/results:4.1
     container_name: results-service
     environment:
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/results?serverVersion=12&charset=utf8
