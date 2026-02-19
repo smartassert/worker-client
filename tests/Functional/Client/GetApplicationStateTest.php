@@ -42,7 +42,6 @@ class GetApplicationStateTest extends AbstractClientTestCase
                 'responseData' => [
                     'application' => [
                         'state' => 'awaiting-job',
-                        'is_end_state' => false,
                         'meta_state' => [
                             'ended' => false,
                             'succeeded' => false,
@@ -50,7 +49,6 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                     'compilation' => [
                         'state' => 'awaiting',
-                        'is_end_state' => false,
                         'meta_state' => [
                             'ended' => false,
                             'succeeded' => false,
@@ -58,7 +56,6 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                     'execution' => [
                         'state' => 'awaiting',
-                        'is_end_state' => false,
                         'meta_state' => [
                             'ended' => false,
                             'succeeded' => false,
@@ -66,7 +63,6 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                     'event_delivery' => [
                         'state' => 'awaiting',
-                        'is_end_state' => false,
                         'meta_state' => [
                             'ended' => false,
                             'succeeded' => false,
@@ -84,7 +80,6 @@ class GetApplicationStateTest extends AbstractClientTestCase
                 'responseData' => [
                     'application' => [
                         'state' => 'compiling',
-                        'is_end_state' => false,
                         'meta_state' => [
                             'ended' => false,
                             'succeeded' => false,
@@ -92,7 +87,6 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                     'compilation' => [
                         'state' => 'running',
-                        'is_end_state' => false,
                         'meta_state' => [
                             'ended' => false,
                             'succeeded' => false,
@@ -100,7 +94,6 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                     'execution' => [
                         'state' => 'awaiting',
-                        'is_end_state' => false,
                         'meta_state' => [
                             'ended' => false,
                             'succeeded' => false,
@@ -108,7 +101,6 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                     'event_delivery' => [
                         'state' => 'running',
-                        'is_end_state' => false,
                         'meta_state' => [
                             'ended' => false,
                             'succeeded' => false,
@@ -126,7 +118,6 @@ class GetApplicationStateTest extends AbstractClientTestCase
                 'responseData' => [
                     'application' => [
                         'state' => 'executing',
-                        'is_end_state' => false,
                         'meta_state' => [
                             'ended' => false,
                             'succeeded' => false,
@@ -134,7 +125,6 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                     'compilation' => [
                         'state' => 'complete',
-                        'is_end_state' => true,
                         'meta_state' => [
                             'ended' => true,
                             'succeeded' => true,
@@ -142,7 +132,6 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                     'execution' => [
                         'state' => 'running',
-                        'is_end_state' => false,
                         'meta_state' => [
                             'ended' => false,
                             'succeeded' => false,
@@ -150,7 +139,6 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                     'event_delivery' => [
                         'state' => 'running',
-                        'is_end_state' => false,
                         'meta_state' => [
                             'ended' => false,
                             'succeeded' => false,
@@ -168,7 +156,6 @@ class GetApplicationStateTest extends AbstractClientTestCase
                 'responseData' => [
                     'application' => [
                         'state' => 'completing-event-delivery',
-                        'is_end_state' => false,
                         'meta_state' => [
                             'ended' => false,
                             'succeeded' => false,
@@ -176,7 +163,6 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                     'compilation' => [
                         'state' => 'complete',
-                        'is_end_state' => true,
                         'meta_state' => [
                             'ended' => true,
                             'succeeded' => true,
@@ -184,7 +170,6 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                     'execution' => [
                         'state' => 'complete',
-                        'is_end_state' => true,
                         'meta_state' => [
                             'ended' => true,
                             'succeeded' => true,
@@ -192,7 +177,6 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                     'event_delivery' => [
                         'state' => 'running',
-                        'is_end_state' => false,
                         'meta_state' => [
                             'ended' => false,
                             'succeeded' => false,
@@ -210,7 +194,6 @@ class GetApplicationStateTest extends AbstractClientTestCase
                 'responseData' => [
                     'application' => [
                         'state' => 'complete',
-                        'is_end_state' => true,
                         'meta_state' => [
                             'ended' => true,
                             'succeeded' => true,
@@ -218,7 +201,6 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                     'compilation' => [
                         'state' => 'complete',
-                        'is_end_state' => true,
                         'meta_state' => [
                             'ended' => true,
                             'succeeded' => true,
@@ -226,7 +208,6 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                     'execution' => [
                         'state' => 'complete',
-                        'is_end_state' => true,
                         'meta_state' => [
                             'ended' => true,
                             'succeeded' => true,
@@ -234,7 +215,6 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                     'event_delivery' => [
                         'state' => 'complete',
-                        'is_end_state' => true,
                         'meta_state' => [
                             'ended' => true,
                             'succeeded' => true,

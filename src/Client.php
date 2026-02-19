@@ -214,13 +214,6 @@ readonly class Client
             return null;
         }
 
-        $isEndState = $data['is_end_state'] ?? null;
-        $isEndState = is_bool($isEndState) ? $isEndState : null;
-
-        if (null === $isEndState) {
-            return null;
-        }
-
         $metaStateData = $data['meta_state'] ?? null;
         $metaStateData = is_array($metaStateData) ? $metaStateData : null;
 
@@ -242,6 +235,6 @@ readonly class Client
             return null;
         }
 
-        return new ComponentState($state, $isEndState, new MetaState($metaStateEnded, $metaStateSucceeded));
+        return new ComponentState($state, $metaStateEnded, new MetaState($metaStateEnded, $metaStateSucceeded));
     }
 }
