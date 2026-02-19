@@ -85,7 +85,7 @@
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
         "phpunit/phpunit": "^12",
-        "smartassert/results-client": "^9.0",
+        "smartassert/results-client": "^10.0",
         "smartassert/test-authenticaton-provider-bundle": "^6.0",
         "smartassert/worker-job-source": "^7.0",
         "squizlabs/php_codesniffer": "^4.0",
