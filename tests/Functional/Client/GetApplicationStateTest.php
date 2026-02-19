@@ -70,10 +70,10 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                 ],
                 'expected' => new ApplicationState(
-                    new ComponentState('awaiting-job', false, new MetaState(false, false)),
-                    new ComponentState('awaiting', false, new MetaState(false, false)),
-                    new ComponentState('awaiting', false, new MetaState(false, false)),
-                    new ComponentState('awaiting', false, new MetaState(false, false)),
+                    new ComponentState('awaiting-job', new MetaState(false, false)),
+                    new ComponentState('awaiting', new MetaState(false, false)),
+                    new ComponentState('awaiting', new MetaState(false, false)),
+                    new ComponentState('awaiting', new MetaState(false, false)),
                 ),
             ],
             'compiling' => [
@@ -108,10 +108,10 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                 ],
                 'expected' => new ApplicationState(
-                    new ComponentState('compiling', false, new MetaState(false, false)),
-                    new ComponentState('running', false, new MetaState(false, false)),
-                    new ComponentState('awaiting', false, new MetaState(false, false)),
-                    new ComponentState('running', false, new MetaState(false, false)),
+                    new ComponentState('compiling', new MetaState(false, false)),
+                    new ComponentState('running', new MetaState(false, false)),
+                    new ComponentState('awaiting', new MetaState(false, false)),
+                    new ComponentState('running', new MetaState(false, false)),
                 ),
             ],
             'executing' => [
@@ -146,10 +146,10 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                 ],
                 'expected' => new ApplicationState(
-                    new ComponentState('executing', false, new MetaState(false, false)),
-                    new ComponentState('complete', true, new MetaState(true, true)),
-                    new ComponentState('running', false, new MetaState(false, false)),
-                    new ComponentState('running', false, new MetaState(false, false)),
+                    new ComponentState('executing', new MetaState(false, false)),
+                    new ComponentState('complete', new MetaState(true, true)),
+                    new ComponentState('running', new MetaState(false, false)),
+                    new ComponentState('running', new MetaState(false, false)),
                 ),
             ],
             'complete, awaiting event delivery completion' => [
@@ -184,10 +184,10 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                 ],
                 'expected' => new ApplicationState(
-                    new ComponentState('completing-event-delivery', false, new MetaState(false, false)),
-                    new ComponentState('complete', true, new MetaState(true, true)),
-                    new ComponentState('complete', true, new MetaState(true, true)),
-                    new ComponentState('running', false, new MetaState(false, false)),
+                    new ComponentState('completing-event-delivery', new MetaState(false, false)),
+                    new ComponentState('complete', new MetaState(true, true)),
+                    new ComponentState('complete', new MetaState(true, true)),
+                    new ComponentState('running', new MetaState(false, false)),
                 ),
             ],
             'complete' => [
@@ -222,10 +222,10 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                 ],
                 'expected' => new ApplicationState(
-                    new ComponentState('complete', true, new MetaState(true, true)),
-                    new ComponentState('complete', true, new MetaState(true, true)),
-                    new ComponentState('complete', true, new MetaState(true, true)),
-                    new ComponentState('complete', true, new MetaState(true, true)),
+                    new ComponentState('complete', new MetaState(true, true)),
+                    new ComponentState('complete', new MetaState(true, true)),
+                    new ComponentState('complete', new MetaState(true, true)),
+                    new ComponentState('complete', new MetaState(true, true)),
                 ),
             ],
         ];

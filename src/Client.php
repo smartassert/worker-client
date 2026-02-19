@@ -235,6 +235,6 @@ readonly class Client
             return null;
         }
 
-        return new ComponentState($state, $metaStateEnded, new MetaState($metaStateEnded, $metaStateSucceeded));
+        return new ComponentState($state, new MetaState($metaStateEnded, $metaStateSucceeded));
     }
 }
