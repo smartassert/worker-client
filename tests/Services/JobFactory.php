@@ -45,7 +45,7 @@ class JobFactory
 
         return $this->client->createJob(
             $jobCreationProperties->resultsJob->label,
-            $jobCreationProperties->resultsJob->token,
+            $jobCreationProperties->resultsJob->authenticator,
             $jobCreationProperties->maximumDurationInSeconds,
             $serializedSource,
         );
