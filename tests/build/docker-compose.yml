@@ -31,12 +31,13 @@ services:
       - ./http-config/caddy/Caddyfile:/etc/caddy/Caddyfile
 
   results-service:
-    image: ghcr.io/smartassert/results:4.1
+    image: ghcr.io/smartassert/results:6.0
     container_name: results-service
     environment:
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/results?serverVersion=12&charset=utf8
       AUTHENTICATION_BASE_URL: http://users-http
       IS_READY: 1
+      SELF_URL: http://results-http
     depends_on:
       - postgres
       - users-http
@@ -54,11 +55,10 @@ services:
       - ./http-config/caddy/Caddyfile:/etc/caddy/Caddyfile
 
   worker-service:
-    image: ghcr.io/smartassert/worker:9.0
+    image: ghcr.io/smartassert/worker:11.0
     container_name: worker-service
     environment:
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/worker-db?serverVersion=12&charset=utf8
-      RESULTS_BASE_URL: http://results-http
     depends_on:
       - postgres
     volumes:

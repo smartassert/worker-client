@@ -93,7 +93,7 @@ readonly class Client
      */
     public function createJob(
         string $label,
-        string $resultsToken,
+        string $eventAddUrl,
         int $maximumDurationInSeconds,
         string $serializedJobSource
     ): Job {
@@ -102,7 +102,7 @@ readonly class Client
                 (new Request('POST', $this->createUrl('/job')))
                     ->withPayload(new UrlEncodedPayload([
                         'label' => $label,
-                        'results_token' => $resultsToken,
+                        'event_add_url' => $eventAddUrl,
                         'maximum_duration_in_seconds' => $maximumDurationInSeconds,
                         'source' => $serializedJobSource,
                     ]))
