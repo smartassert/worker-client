@@ -31,6 +31,17 @@ readonly class Client
         private JobFactory $jobFactory,
     ) {}
 
+    public function isReady(): bool
+    {
+        try {
+            $this->getApplicationState();
+        } catch (\Throwable) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * @throws InvalidModelDataException
      * @throws NonSuccessResponseException
