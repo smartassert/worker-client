@@ -54,6 +54,7 @@ class IsReadyTest extends AbstractClientTestCase
                         'application' => [
                             'state' => 'awaiting-job',
                             'meta_state' => [
+                                'pending' => false,
                                 'ended' => false,
                                 'succeeded' => false,
                             ],
@@ -61,6 +62,7 @@ class IsReadyTest extends AbstractClientTestCase
                         'compilation' => [
                             'state' => 'awaiting',
                             'meta_state' => [
+                                'pending' => false,
                                 'ended' => false,
                                 'succeeded' => false,
                             ],
@@ -68,6 +70,7 @@ class IsReadyTest extends AbstractClientTestCase
                         'execution' => [
                             'state' => 'awaiting',
                             'meta_state' => [
+                                'pending' => false,
                                 'ended' => false,
                                 'succeeded' => false,
                             ],
@@ -75,6 +78,7 @@ class IsReadyTest extends AbstractClientTestCase
                         'event_delivery' => [
                             'state' => 'awaiting',
                             'meta_state' => [
+                                'pending' => false,
                                 'ended' => false,
                                 'succeeded' => false,
                             ],

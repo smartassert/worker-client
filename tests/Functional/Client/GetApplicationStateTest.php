@@ -43,6 +43,7 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     'application' => [
                         'state' => 'awaiting-job',
                         'meta_state' => [
+                            'pending' => true,
                             'ended' => false,
                             'succeeded' => false,
                         ],
@@ -50,6 +51,7 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     'compilation' => [
                         'state' => 'awaiting',
                         'meta_state' => [
+                            'pending' => true,
                             'ended' => false,
                             'succeeded' => false,
                         ],
@@ -57,6 +59,7 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     'execution' => [
                         'state' => 'awaiting',
                         'meta_state' => [
+                            'pending' => true,
                             'ended' => false,
                             'succeeded' => false,
                         ],
@@ -64,16 +67,17 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     'event_delivery' => [
                         'state' => 'awaiting',
                         'meta_state' => [
+                            'pending' => true,
                             'ended' => false,
                             'succeeded' => false,
                         ],
                     ],
                 ],
                 'expected' => new ApplicationState(
-                    new ComponentState('awaiting-job', new MetaState(false, false)),
-                    new ComponentState('awaiting', new MetaState(false, false)),
-                    new ComponentState('awaiting', new MetaState(false, false)),
-                    new ComponentState('awaiting', new MetaState(false, false)),
+                    new ComponentState('awaiting-job', new MetaState(false, false, true)),
+                    new ComponentState('awaiting', new MetaState(false, false, true)),
+                    new ComponentState('awaiting', new MetaState(false, false, true)),
+                    new ComponentState('awaiting', new MetaState(false, false, true)),
                 ),
             ],
             'compiling' => [
@@ -81,6 +85,7 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     'application' => [
                         'state' => 'compiling',
                         'meta_state' => [
+                            'pending' => false,
                             'ended' => false,
                             'succeeded' => false,
                         ],
@@ -88,6 +93,7 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     'compilation' => [
                         'state' => 'running',
                         'meta_state' => [
+                            'pending' => false,
                             'ended' => false,
                             'succeeded' => false,
                         ],
@@ -95,6 +101,7 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     'execution' => [
                         'state' => 'awaiting',
                         'meta_state' => [
+                            'pending' => true,
                             'ended' => false,
                             'succeeded' => false,
                         ],
@@ -102,16 +109,17 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     'event_delivery' => [
                         'state' => 'running',
                         'meta_state' => [
+                            'pending' => true,
                             'ended' => false,
                             'succeeded' => false,
                         ],
                     ],
                 ],
                 'expected' => new ApplicationState(
-                    new ComponentState('compiling', new MetaState(false, false)),
-                    new ComponentState('running', new MetaState(false, false)),
-                    new ComponentState('awaiting', new MetaState(false, false)),
-                    new ComponentState('running', new MetaState(false, false)),
+                    new ComponentState('compiling', new MetaState(false, false, false)),
+                    new ComponentState('running', new MetaState(false, false, false)),
+                    new ComponentState('awaiting', new MetaState(false, false, true)),
+                    new ComponentState('running', new MetaState(false, false, true)),
                 ),
             ],
             'executing' => [
@@ -119,6 +127,7 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     'application' => [
                         'state' => 'executing',
                         'meta_state' => [
+                            'pending' => false,
                             'ended' => false,
                             'succeeded' => false,
                         ],
@@ -126,6 +135,7 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     'compilation' => [
                         'state' => 'complete',
                         'meta_state' => [
+                            'pending' => false,
                             'ended' => true,
                             'succeeded' => true,
                         ],
@@ -133,6 +143,7 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     'execution' => [
                         'state' => 'running',
                         'meta_state' => [
+                            'pending' => false,
                             'ended' => false,
                             'succeeded' => false,
                         ],
@@ -140,16 +151,17 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     'event_delivery' => [
                         'state' => 'running',
                         'meta_state' => [
+                            'pending' => false,
                             'ended' => false,
                             'succeeded' => false,
                         ],
                     ],
                 ],
                 'expected' => new ApplicationState(
-                    new ComponentState('executing', new MetaState(false, false)),
-                    new ComponentState('complete', new MetaState(true, true)),
-                    new ComponentState('running', new MetaState(false, false)),
-                    new ComponentState('running', new MetaState(false, false)),
+                    new ComponentState('executing', new MetaState(false, false, false)),
+                    new ComponentState('complete', new MetaState(true, true, false)),
+                    new ComponentState('running', new MetaState(false, false, false)),
+                    new ComponentState('running', new MetaState(false, false, false)),
                 ),
             ],
             'complete, awaiting event delivery completion' => [
@@ -157,6 +169,7 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     'application' => [
                         'state' => 'completing-event-delivery',
                         'meta_state' => [
+                            'pending' => false,
                             'ended' => false,
                             'succeeded' => false,
                         ],
@@ -164,6 +177,7 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     'compilation' => [
                         'state' => 'complete',
                         'meta_state' => [
+                            'pending' => false,
                             'ended' => true,
                             'succeeded' => true,
                         ],
@@ -171,6 +185,7 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     'execution' => [
                         'state' => 'complete',
                         'meta_state' => [
+                            'pending' => false,
                             'ended' => true,
                             'succeeded' => true,
                         ],
@@ -178,16 +193,17 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     'event_delivery' => [
                         'state' => 'running',
                         'meta_state' => [
+                            'pending' => false,
                             'ended' => false,
                             'succeeded' => false,
                         ],
                     ],
                 ],
                 'expected' => new ApplicationState(
-                    new ComponentState('completing-event-delivery', new MetaState(false, false)),
-                    new ComponentState('complete', new MetaState(true, true)),
-                    new ComponentState('complete', new MetaState(true, true)),
-                    new ComponentState('running', new MetaState(false, false)),
+                    new ComponentState('completing-event-delivery', new MetaState(false, false, false)),
+                    new ComponentState('complete', new MetaState(true, true, false)),
+                    new ComponentState('complete', new MetaState(true, true, false)),
+                    new ComponentState('running', new MetaState(false, false, false)),
                 ),
             ],
             'complete' => [
@@ -195,6 +211,7 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     'application' => [
                         'state' => 'complete',
                         'meta_state' => [
+                            'pending' => false,
                             'ended' => true,
                             'succeeded' => true,
                         ],
@@ -202,6 +219,7 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     'compilation' => [
                         'state' => 'complete',
                         'meta_state' => [
+                            'pending' => false,
                             'ended' => true,
                             'succeeded' => true,
                         ],
@@ -209,6 +227,7 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     'execution' => [
                         'state' => 'complete',
                         'meta_state' => [
+                            'pending' => false,
                             'ended' => true,
                             'succeeded' => true,
                         ],
@@ -216,16 +235,17 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     'event_delivery' => [
                         'state' => 'complete',
                         'meta_state' => [
+                            'pending' => false,
                             'ended' => true,
                             'succeeded' => true,
                         ],
                     ],
                 ],
                 'expected' => new ApplicationState(
-                    new ComponentState('complete', new MetaState(true, true)),
-                    new ComponentState('complete', new MetaState(true, true)),
-                    new ComponentState('complete', new MetaState(true, true)),
-                    new ComponentState('complete', new MetaState(true, true)),
+                    new ComponentState('complete', new MetaState(true, true, false)),
+                    new ComponentState('complete', new MetaState(true, true, false)),
+                    new ComponentState('complete', new MetaState(true, true, false)),
+                    new ComponentState('complete', new MetaState(true, true, false)),
                 ),
             ],
         ];
