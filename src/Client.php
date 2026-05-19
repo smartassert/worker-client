@@ -246,6 +246,20 @@ readonly class Client
             return null;
         }
 
-        return new ComponentState($state, new MetaState($metaStateEnded, $metaStateSucceeded));
+        $metaStatePending = $metaStateData['pending'] ?? null;
+        $metaStatePending = is_bool($metaStatePending) ? $metaStatePending : null;
+
+        if (null === $metaStatePending) {
+            return null;
+        }
+
+        return new ComponentState(
+            $state,
+            new MetaState(
+                ended: $metaStateEnded,
+                succeeded: $metaStateSucceeded,
+                pending: $metaStatePending
+            ),
+        );
     }
 }
