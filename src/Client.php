@@ -20,7 +20,6 @@ use SmartAssert\WorkerClient\Model\ComponentState;
 use SmartAssert\WorkerClient\Model\Event;
 use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\JobCreationException;
-use SmartAssert\WorkerClient\Model\MetaState;
 
 readonly class Client
 {
@@ -29,6 +28,7 @@ readonly class Client
         private ServiceClient $serviceClient,
         private EventFactory $eventFactory,
         private JobFactory $jobFactory,
+        private ComponentMetaStateFactory $componentMetaStateFactory,
     ) {}
 
     public function isReady(): bool
@@ -220,46 +220,21 @@ readonly class Client
         $state = $data['state'] ?? null;
         $state = is_string($state) ? $state : null;
         $state = '' !== $state ? $state : null;
-
         if (null === $state) {
             return null;
         }
 
         $metaStateData = $data['meta_state'] ?? null;
         $metaStateData = is_array($metaStateData) ? $metaStateData : null;
-
         if (null === $metaStateData) {
             return null;
         }
 
-        $metaStateEnded = $metaStateData['ended'] ?? null;
-        $metaStateEnded = is_bool($metaStateEnded) ? $metaStateEnded : null;
-
-        if (null === $metaStateEnded) {
+        $metaState = $this->componentMetaStateFactory->create($metaStateData);
+        if (null === $metaState) {
             return null;
         }
 
-        $metaStateSucceeded = $metaStateData['succeeded'] ?? null;
-        $metaStateSucceeded = is_bool($metaStateSucceeded) ? $metaStateSucceeded : null;
-
-        if (null === $metaStateSucceeded) {
-            return null;
-        }
-
-        $metaStatePending = $metaStateData['pending'] ?? null;
-        $metaStatePending = is_bool($metaStatePending) ? $metaStatePending : null;
-
-        if (null === $metaStatePending) {
-            return null;
-        }
-
-        return new ComponentState(
-            $state,
-            new MetaState(
-                ended: $metaStateEnded,
-                succeeded: $metaStateSucceeded,
-                pending: $metaStatePending
-            ),
-        );
+        return new ComponentState($state, $metaState);
     }
 }
