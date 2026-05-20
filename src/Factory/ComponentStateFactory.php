@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SmartAssert\WorkerClient;
+namespace SmartAssert\WorkerClient\Factory;
 
 use SmartAssert\WorkerClient\Model\ComponentState;
 

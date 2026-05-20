@@ -9,15 +9,15 @@ use GuzzleHttp\Psr7\HttpFactory;
 use SmartAssert\ServiceClient\Client as ServiceClient;
 use SmartAssert\ServiceClient\ExceptionFactory\CurlExceptionFactory;
 use SmartAssert\ServiceClient\ResponseFactory\ResponseFactory;
-use SmartAssert\WorkerClient\ApplicationStateFactory;
 use SmartAssert\WorkerClient\Client;
-use SmartAssert\WorkerClient\ComponentMetaStateFactory;
-use SmartAssert\WorkerClient\ComponentStateFactory;
-use SmartAssert\WorkerClient\EventFactory;
-use SmartAssert\WorkerClient\JobCreationExceptionFactory;
-use SmartAssert\WorkerClient\JobFactory;
-use SmartAssert\WorkerClient\ResourceReferenceFactory;
-use SmartAssert\WorkerClient\TestFactory;
+use SmartAssert\WorkerClient\Factory\ApplicationStateFactory;
+use SmartAssert\WorkerClient\Factory\ComponentMetaStateFactory;
+use SmartAssert\WorkerClient\Factory\ComponentStateFactory;
+use SmartAssert\WorkerClient\Factory\EventFactory;
+use SmartAssert\WorkerClient\Factory\JobCreationExceptionFactory;
+use SmartAssert\WorkerClient\Factory\JobFactory;
+use SmartAssert\WorkerClient\Factory\ResourceReferenceFactory;
+use SmartAssert\WorkerClient\Factory\TestFactory;
 
 class ClientFactory
 {
