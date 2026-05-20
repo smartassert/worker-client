@@ -27,7 +27,7 @@ readonly class Client
         private ServiceClient $serviceClient,
         private EventFactory $eventFactory,
         private JobFactory $jobFactory,
-        private ComponentStateFactory $componentStateFactory,
+        private ApplicationStateFactory $applicationStateFactory,
     ) {}
 
     public function isReady(): bool
@@ -57,7 +57,7 @@ readonly class Client
 
         $responseDataInspector = new ArrayInspector($response->getData());
 
-        $applicationState = $this->createApplicationStateModel($responseDataInspector);
+        $applicationState = $this->applicationStateFactory->create($responseDataInspector);
         if (null === $applicationState) {
             throw InvalidModelDataException::fromJsonResponse(ApplicationState::class, $response);
         }
@@ -182,25 +182,6 @@ readonly class Client
     private function createUrl(string $path): string
     {
         return rtrim($this->baseUrl, '/') . $path;
-    }
-
-    private function createApplicationStateModel(ArrayInspector $data): ?ApplicationState
-    {
-        $applicationState = $this->componentStateFactory->create($data->getArray('application'));
-        $compilationState = $this->componentStateFactory->create($data->getArray('compilation'));
-        $executionState = $this->componentStateFactory->create($data->getArray('execution'));
-        $eventDeliveryState = $this->componentStateFactory->create($data->getArray('event_delivery'));
-
-        if (
-            null === $applicationState
-            || null === $compilationState
-            || null === $executionState
-            || null === $eventDeliveryState
-        ) {
-            return null;
-        }
-
-        return new ApplicationState($applicationState, $compilationState, $executionState, $eventDeliveryState);
     }
 
     private function createJobCreationErrorModel(ArrayInspector $data): ?JobCreationException

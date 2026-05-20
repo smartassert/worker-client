@@ -9,6 +9,7 @@ use GuzzleHttp\Psr7\HttpFactory;
 use SmartAssert\ServiceClient\Client as ServiceClient;
 use SmartAssert\ServiceClient\ExceptionFactory\CurlExceptionFactory;
 use SmartAssert\ServiceClient\ResponseFactory\ResponseFactory;
+use SmartAssert\WorkerClient\ApplicationStateFactory;
 use SmartAssert\WorkerClient\Client;
 use SmartAssert\WorkerClient\ComponentMetaStateFactory;
 use SmartAssert\WorkerClient\ComponentStateFactory;
@@ -43,8 +44,10 @@ class ClientFactory
                 new ResourceReferenceFactory(),
                 new TestFactory(),
             ),
-            new ComponentStateFactory(
-                new ComponentMetaStateFactory(),
+            new ApplicationStateFactory(
+                new ComponentStateFactory(
+                    new ComponentMetaStateFactory(),
+                ),
             ),
         );
     }
