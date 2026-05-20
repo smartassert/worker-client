@@ -15,12 +15,14 @@ use SmartAssert\ServiceClient\Exception\UnauthorizedException;
 use SmartAssert\ServiceClient\Payload\UrlEncodedPayload;
 use SmartAssert\ServiceClient\Request;
 use SmartAssert\ServiceClient\Response\JsonResponse;
+use SmartAssert\WorkerClient\Factory\ApplicationStateFactory;
+use SmartAssert\WorkerClient\Factory\EventFactory;
+use SmartAssert\WorkerClient\Factory\JobCreationExceptionFactory;
+use SmartAssert\WorkerClient\Factory\JobFactory;
 use SmartAssert\WorkerClient\Model\ApplicationState;
-use SmartAssert\WorkerClient\Model\ComponentState;
 use SmartAssert\WorkerClient\Model\Event;
 use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\JobCreationException;
-use SmartAssert\WorkerClient\Model\MetaState;
 
 readonly class Client
 {
@@ -29,6 +31,8 @@ readonly class Client
         private ServiceClient $serviceClient,
         private EventFactory $eventFactory,
         private JobFactory $jobFactory,
+        private ApplicationStateFactory $applicationStateFactory,
+        private JobCreationExceptionFactory $jobCreationExceptionFactory,
     ) {}
 
     public function isReady(): bool
@@ -58,7 +62,7 @@ readonly class Client
 
         $responseDataInspector = new ArrayInspector($response->getData());
 
-        $applicationState = $this->createApplicationStateModel($responseDataInspector);
+        $applicationState = $this->applicationStateFactory->create($responseDataInspector);
         if (null === $applicationState) {
             throw InvalidModelDataException::fromJsonResponse(ApplicationState::class, $response);
         }
@@ -126,7 +130,9 @@ readonly class Client
                     throw InvalidResponseTypeException::create($response, JsonResponse::class);
                 }
 
-                $jobCreationError = $this->createJobCreationErrorModel(new ArrayInspector($response->getData()));
+                $jobCreationError = $this->jobCreationExceptionFactory->create(
+                    new ArrayInspector($response->getData())
+                );
                 if (null === $jobCreationError) {
                     throw InvalidModelDataException::fromJsonResponse(JobCreationException::class, $response);
                 }
@@ -183,83 +189,5 @@ readonly class Client
     private function createUrl(string $path): string
     {
         return rtrim($this->baseUrl, '/') . $path;
-    }
-
-    private function createApplicationStateModel(ArrayInspector $data): ?ApplicationState
-    {
-        $applicationState = $this->createComponentState($data->getArray('application'));
-        $compilationState = $this->createComponentState($data->getArray('compilation'));
-        $executionState = $this->createComponentState($data->getArray('execution'));
-        $eventDeliveryState = $this->createComponentState($data->getArray('event_delivery'));
-
-        if (
-            null === $applicationState
-            || null === $compilationState
-            || null === $executionState
-            || null === $eventDeliveryState
-        ) {
-            return null;
-        }
-
-        return new ApplicationState($applicationState, $compilationState, $executionState, $eventDeliveryState);
-    }
-
-    private function createJobCreationErrorModel(ArrayInspector $data): ?JobCreationException
-    {
-        $errorState = $data->getNonEmptyString('error_state');
-        $payload = $data->getArray('payload');
-
-        return null === $errorState ? null : new JobCreationException($errorState, $payload);
-    }
-
-    /**
-     * @param array<mixed> $data
-     */
-    private function createComponentState(array $data): ?ComponentState
-    {
-        $state = $data['state'] ?? null;
-        $state = is_string($state) ? $state : null;
-        $state = '' !== $state ? $state : null;
-
-        if (null === $state) {
-            return null;
-        }
-
-        $metaStateData = $data['meta_state'] ?? null;
-        $metaStateData = is_array($metaStateData) ? $metaStateData : null;
-
-        if (null === $metaStateData) {
-            return null;
-        }
-
-        $metaStateEnded = $metaStateData['ended'] ?? null;
-        $metaStateEnded = is_bool($metaStateEnded) ? $metaStateEnded : null;
-
-        if (null === $metaStateEnded) {
-            return null;
-        }
-
-        $metaStateSucceeded = $metaStateData['succeeded'] ?? null;
-        $metaStateSucceeded = is_bool($metaStateSucceeded) ? $metaStateSucceeded : null;
-
-        if (null === $metaStateSucceeded) {
-            return null;
-        }
-
-        $metaStatePending = $metaStateData['pending'] ?? null;
-        $metaStatePending = is_bool($metaStatePending) ? $metaStatePending : null;
-
-        if (null === $metaStatePending) {
-            return null;
-        }
-
-        return new ComponentState(
-            $state,
-            new MetaState(
-                ended: $metaStateEnded,
-                succeeded: $metaStateSucceeded,
-                pending: $metaStatePending
-            ),
-        );
     }
 }
