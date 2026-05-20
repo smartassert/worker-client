@@ -11,6 +11,7 @@ use SmartAssert\ServiceClient\ExceptionFactory\CurlExceptionFactory;
 use SmartAssert\ServiceClient\ResponseFactory\ResponseFactory;
 use SmartAssert\WorkerClient\Client;
 use SmartAssert\WorkerClient\ComponentMetaStateFactory;
+use SmartAssert\WorkerClient\ComponentStateFactory;
 use SmartAssert\WorkerClient\EventFactory;
 use SmartAssert\WorkerClient\JobFactory;
 use SmartAssert\WorkerClient\ResourceReferenceFactory;
@@ -42,7 +43,9 @@ class ClientFactory
                 new ResourceReferenceFactory(),
                 new TestFactory(),
             ),
-            new ComponentMetaStateFactory(),
+            new ComponentStateFactory(
+                new ComponentMetaStateFactory(),
+            ),
         );
     }
 }

@@ -16,7 +16,6 @@ use SmartAssert\ServiceClient\Payload\UrlEncodedPayload;
 use SmartAssert\ServiceClient\Request;
 use SmartAssert\ServiceClient\Response\JsonResponse;
 use SmartAssert\WorkerClient\Model\ApplicationState;
-use SmartAssert\WorkerClient\Model\ComponentState;
 use SmartAssert\WorkerClient\Model\Event;
 use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\JobCreationException;
@@ -28,7 +27,7 @@ readonly class Client
         private ServiceClient $serviceClient,
         private EventFactory $eventFactory,
         private JobFactory $jobFactory,
-        private ComponentMetaStateFactory $componentMetaStateFactory,
+        private ComponentStateFactory $componentStateFactory,
     ) {}
 
     public function isReady(): bool
@@ -187,10 +186,10 @@ readonly class Client
 
     private function createApplicationStateModel(ArrayInspector $data): ?ApplicationState
     {
-        $applicationState = $this->createComponentState($data->getArray('application'));
-        $compilationState = $this->createComponentState($data->getArray('compilation'));
-        $executionState = $this->createComponentState($data->getArray('execution'));
-        $eventDeliveryState = $this->createComponentState($data->getArray('event_delivery'));
+        $applicationState = $this->componentStateFactory->create($data->getArray('application'));
+        $compilationState = $this->componentStateFactory->create($data->getArray('compilation'));
+        $executionState = $this->componentStateFactory->create($data->getArray('execution'));
+        $eventDeliveryState = $this->componentStateFactory->create($data->getArray('event_delivery'));
 
         if (
             null === $applicationState
@@ -210,31 +209,5 @@ readonly class Client
         $payload = $data->getArray('payload');
 
         return null === $errorState ? null : new JobCreationException($errorState, $payload);
-    }
-
-    /**
-     * @param array<mixed> $data
-     */
-    private function createComponentState(array $data): ?ComponentState
-    {
-        $state = $data['state'] ?? null;
-        $state = is_string($state) ? $state : null;
-        $state = '' !== $state ? $state : null;
-        if (null === $state) {
-            return null;
-        }
-
-        $metaStateData = $data['meta_state'] ?? null;
-        $metaStateData = is_array($metaStateData) ? $metaStateData : null;
-        if (null === $metaStateData) {
-            return null;
-        }
-
-        $metaState = $this->componentMetaStateFactory->create($metaStateData);
-        if (null === $metaState) {
-            return null;
-        }
-
-        return new ComponentState($state, $metaState);
     }
 }
