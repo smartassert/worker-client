@@ -28,6 +28,7 @@ readonly class Client
         private EventFactory $eventFactory,
         private JobFactory $jobFactory,
         private ApplicationStateFactory $applicationStateFactory,
+        private JobCreationExceptionFactory $jobCreationExceptionFactory,
     ) {}
 
     public function isReady(): bool
@@ -125,7 +126,9 @@ readonly class Client
                     throw InvalidResponseTypeException::create($response, JsonResponse::class);
                 }
 
-                $jobCreationError = $this->createJobCreationErrorModel(new ArrayInspector($response->getData()));
+                $jobCreationError = $this->jobCreationExceptionFactory->create(
+                    new ArrayInspector($response->getData())
+                );
                 if (null === $jobCreationError) {
                     throw InvalidModelDataException::fromJsonResponse(JobCreationException::class, $response);
                 }
@@ -182,13 +185,5 @@ readonly class Client
     private function createUrl(string $path): string
     {
         return rtrim($this->baseUrl, '/') . $path;
-    }
-
-    private function createJobCreationErrorModel(ArrayInspector $data): ?JobCreationException
-    {
-        $errorState = $data->getNonEmptyString('error_state');
-        $payload = $data->getArray('payload');
-
-        return null === $errorState ? null : new JobCreationException($errorState, $payload);
     }
 }

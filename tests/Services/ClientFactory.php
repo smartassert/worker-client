@@ -14,6 +14,7 @@ use SmartAssert\WorkerClient\Client;
 use SmartAssert\WorkerClient\ComponentMetaStateFactory;
 use SmartAssert\WorkerClient\ComponentStateFactory;
 use SmartAssert\WorkerClient\EventFactory;
+use SmartAssert\WorkerClient\JobCreationExceptionFactory;
 use SmartAssert\WorkerClient\JobFactory;
 use SmartAssert\WorkerClient\ResourceReferenceFactory;
 use SmartAssert\WorkerClient\TestFactory;
@@ -49,6 +50,7 @@ class ClientFactory
                     new ComponentMetaStateFactory(),
                 ),
             ),
+            new JobCreationExceptionFactory(),
         );
     }
 }
