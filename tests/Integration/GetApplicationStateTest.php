@@ -14,7 +14,7 @@ class GetApplicationStateTest extends AbstractIntegrationTestCase
         $applicationState = self::$client->getApplicationState();
 
         self::assertEquals(
-            new ComponentState('awaiting-job', new MetaState(false, false, true)),
+            new ComponentState('awaiting', new MetaState(false, false, true)),
             $applicationState->applicationState
         );
 
