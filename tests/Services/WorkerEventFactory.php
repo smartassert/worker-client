@@ -50,24 +50,22 @@ class WorkerEventFactory
      */
     public function createWorkerEvent(
         string $referenceId,
-        string $scope,
-        string $outcome,
+        string $type,
         array $payload,
         string $state,
         array $relatedReferenceIds,
     ): int {
         $statement = $this->dataRepository->getConnection()->prepare('
             INSERT INTO worker_event (
-                reference_id, scope, outcome, payload, state
+                reference_id, type,  payload, state
             ) VALUES (
-                :referenceId, :scope, :outcome, :payload, :state
+                :referenceId, :type, :payload, :state
             )
         ');
 
         $statement->execute([
             'referenceId' => $referenceId,
-            'scope' => $scope,
-            'outcome' => $outcome,
+            'type' => $type,
             'payload' => json_encode($payload),
             'state' => $state,
         ]);

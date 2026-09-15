@@ -15,8 +15,7 @@ use SmartAssert\WorkerClient\Tests\Services\WorkerEventFactory;
  *     reference: non-empty-string
  * }
  * @phpstan-type SerializedEvent array{
- *     scope: non-empty-string,
- *     outcome: non-empty-string,
+ *     type: non-empty-string,
  *     state: non-empty-string,
  *     payload: array<mixed>
  * }
@@ -59,8 +58,7 @@ class GetEventTest extends AbstractIntegrationTestCase
 
         $workerEventId = self::$workerEventFactory->createWorkerEvent(
             $referenceId,
-            $eventData['scope'],
-            $eventData['outcome'],
+            $eventData['type'],
             $eventData['payload'],
             $eventData['state'],
             $relatedReferenceIds
@@ -98,8 +96,7 @@ class GetEventTest extends AbstractIntegrationTestCase
                     ],
                 ],
                 'eventData' => [
-                    'scope' => 'job',
-                    'outcome' => 'started',
+                    'type' => 'job/started',
                     'state' => 'awaiting',
                     'payload' => [
                         'tests' => [
@@ -137,14 +134,13 @@ class GetEventTest extends AbstractIntegrationTestCase
                 ],
                 'relatedReferenceDataCollection' => [],
                 'eventData' => [
-                    'scope' => 'job/compilation',
-                    'outcome' => 'started',
+                    'type' => 'lifecycle/compilation-started',
                     'state' => 'awaiting',
                     'payload' => [],
                 ],
                 'expected' => new Event(
                     1,
-                    'job/compilation/started',
+                    'lifecycle/compilation-started',
                     new ResourceReference($jobLabel, $jobReference),
                     [],
                     null,
