@@ -41,7 +41,7 @@ class GetApplicationStateTest extends AbstractClientTestCase
             'new job' => [
                 'responseData' => [
                     'application' => [
-                        'state' => 'awaiting-job',
+                        'state' => 'awaiting',
                         'meta_state' => [
                             'pending' => true,
                             'ended' => false,
@@ -74,7 +74,7 @@ class GetApplicationStateTest extends AbstractClientTestCase
                     ],
                 ],
                 'expected' => new ApplicationState(
-                    new ComponentState('awaiting-job', new MetaState(false, false, true)),
+                    new ComponentState('awaiting', new MetaState(false, false, true)),
                     new ComponentState('awaiting', new MetaState(false, false, true)),
                     new ComponentState('awaiting', new MetaState(false, false, true)),
                     new ComponentState('awaiting', new MetaState(false, false, true)),

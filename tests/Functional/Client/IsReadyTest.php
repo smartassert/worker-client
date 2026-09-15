@@ -52,7 +52,7 @@ class IsReadyTest extends AbstractClientTestCase
                     ['content-type' => 'application/json'],
                     (string) json_encode([
                         'application' => [
-                            'state' => 'awaiting-job',
+                            'state' => 'awaiting',
                             'meta_state' => [
                                 'pending' => false,
                                 'ended' => false,
