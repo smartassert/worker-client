@@ -89,7 +89,8 @@
         "smartassert/test-authenticaton-provider-bundle": "^6.0",
         "smartassert/worker-job-source": "^7.0 || ^8.0",
         "squizlabs/php_codesniffer": "^4.0",
-        "symfony/uid": "*"
+        "symfony/uid": "*",
+        "webignition/http-history-container": "^4.0"
     },
     "minimum-stability":"dev",
     "prefer-stable":true,

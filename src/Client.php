@@ -97,6 +97,7 @@ readonly class Client
     /**
      * @param non-empty-string $label
      * @param positive-int     $maximumDurationInSeconds
+     * @param non-empty-string $stateNotifyUrl
      *
      * @throws ClientExceptionInterface
      * @throws InvalidModelDataException
@@ -110,18 +111,26 @@ readonly class Client
         string $label,
         string $eventAddUrl,
         int $maximumDurationInSeconds,
-        string $serializedJobSource
+        string $serializedJobSource,
+        ?string $stateNotifyUrl = null,
     ): Job {
         try {
-            $response = $this->serviceClient->sendRequestForJson(
-                (new Request('POST', $this->createUrl('/job')))
-                    ->withPayload(new UrlEncodedPayload([
-                        'label' => $label,
-                        'event_add_url' => $eventAddUrl,
-                        'maximum_duration_in_seconds' => $maximumDurationInSeconds,
-                        'source' => $serializedJobSource,
-                    ]))
-            );
+            $payloadData = [
+                'label' => $label,
+                'event_add_url' => $eventAddUrl,
+                'maximum_duration_in_seconds' => $maximumDurationInSeconds,
+                'source' => $serializedJobSource,
+            ];
+
+            if (is_string($stateNotifyUrl)) {
+                $payloadData['state_notify_url'] = $stateNotifyUrl;
+            }
+
+            $request = new Request('POST', $this->createUrl('/job'))
+                ->withPayload(new UrlEncodedPayload($payloadData))
+            ;
+
+            $response = $this->serviceClient->sendRequestForJson($request);
         } catch (NonSuccessResponseException $e) {
             $response = $e->getResponse();
 

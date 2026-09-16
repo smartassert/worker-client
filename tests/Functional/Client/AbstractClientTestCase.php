@@ -6,6 +6,7 @@ namespace SmartAssert\WorkerClient\Tests\Functional\Client;
 
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -18,6 +19,7 @@ use SmartAssert\WorkerClient\Tests\Functional\DataProvider\CommonNonSuccessRespo
 use SmartAssert\WorkerClient\Tests\Functional\DataProvider\InvalidJsonResponseExceptionDataProviderTrait;
 use SmartAssert\WorkerClient\Tests\Functional\DataProvider\NetworkErrorExceptionDataProviderTrait;
 use SmartAssert\WorkerClient\Tests\Services\ClientFactory;
+use webignition\HttpHistoryContainer\Container;
 
 abstract class AbstractClientTestCase extends TestCase
 {
@@ -27,6 +29,7 @@ abstract class AbstractClientTestCase extends TestCase
 
     protected MockHandler $mockHandler;
     protected Client $client;
+    protected Container $httpHistoryContainer;
 
     protected function setUp(): void
     {
@@ -34,6 +37,12 @@ abstract class AbstractClientTestCase extends TestCase
 
         $this->mockHandler = new MockHandler();
         $handlerStack = HandlerStack::create($this->mockHandler);
+
+        $this->httpHistoryContainer = new Container();
+        $historyMiddleware = Middleware::history($this->httpHistoryContainer);
+
+        $handlerStack->push($historyMiddleware);
+
         $this->client = ClientFactory::create('https://worker.example.com', ['handler' => $handlerStack]);
     }
 
