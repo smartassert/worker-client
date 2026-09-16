@@ -4,3 +4,7 @@ parameters:
     - src
     - tests
   inferPrivatePropertyTypeFromConstructor: true
+  ignoreErrors:
+    -
+      message: '#Property.*httpHistoryContainer.*does not accept.*array|ArrayAccess#'
+      path: tests/Functional/Client/AbstractClientTestCase.php
