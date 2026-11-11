@@ -33,8 +33,8 @@ class CreateJobTest extends AbstractIntegrationTestCase
             new JobSourceSerializerFactory(),
         );
 
-        $serviceClient = (new ServiceClientFactory())->create();
-        $resultsClient = (new ResultsClientFactory($serviceClient))->create();
+        $serviceClient = new ServiceClientFactory()->create();
+        $resultsClient = new ResultsClientFactory($serviceClient)->create();
         $apiTokenFactory = new ApiTokenFactory();
 
         self::$resultsJob = $resultsClient->createJob($apiTokenFactory->create(), (string) new Ulid());
