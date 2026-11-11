@@ -21,7 +21,8 @@ class CreateJobTest extends AbstractClientTestCase
     #[DataProvider('requestPropertiesDataProvider')]
     public function testRequestProperties(
         string $label,
-        string $eventDeliveryUrl,
+        string $eventNotifyUrl,
+        string $eventNotifyToken,
         int $maximumDurationInSeconds,
         string $serializedJobSource,
         ?string $stateNotifyUrl,
@@ -38,7 +39,8 @@ class CreateJobTest extends AbstractClientTestCase
 
         $this->client->createJob(
             $label,
-            $eventDeliveryUrl,
+            $eventNotifyUrl,
+            $eventNotifyToken,
             $maximumDurationInSeconds,
             $serializedJobSource,
             $stateNotifyUrl,
@@ -65,26 +67,30 @@ class CreateJobTest extends AbstractClientTestCase
         return [
             'without state notify url' => [
                 'label' => $label,
-                'eventDeliveryUrl' => 'https://localhost/1/event',
+                'eventNotifyUrl' => 'https://localhost/1/event',
+                'eventNotifyToken' => 'event_notify_token_1',
                 'maximumDurationInSeconds' => 600,
                 'serializedJobSource' => 'serialized job source 01',
                 'stateNotifyUrl' => null,
                 'expectedRequestPayload' => [
                     'label' => $label,
-                    'event_add_url' => 'https://localhost/1/event',
+                    'event_notify_url' => 'https://localhost/1/event',
+                    'event_notify_token' => 'event_notify_token_1',
                     'maximum_duration_in_seconds' => '600',
                     'source' => 'serialized job source 01',
                 ],
             ],
             'with state notify url' => [
                 'label' => $label,
-                'eventDeliveryUrl' => 'https://localhost/2/event',
+                'eventNotifyUrl' => 'https://localhost/2/event',
+                'eventNotifyToken' => 'event_notify_token_2',
                 'maximumDurationInSeconds' => 500,
                 'serializedJobSource' => 'serialized job source 02',
                 'stateNotifyUrl' => 'https://localhost/2/state_notify',
                 'expectedRequestPayload' => [
                     'label' => $label,
-                    'event_add_url' => 'https://localhost/2/event',
+                    'event_notify_url' => 'https://localhost/2/event',
+                    'event_notify_token' => 'event_notify_token_2',
                     'maximum_duration_in_seconds' => '500',
                     'source' => 'serialized job source 02',
                     'state_notify_url' => 'https://localhost/2/state_notify',
@@ -98,7 +104,8 @@ class CreateJobTest extends AbstractClientTestCase
         return function () {
             $this->client->createJob(
                 'job label',
-                'event delivery url',
+                'event notify url',
+                'event notify token',
                 300,
                 'serialized job source'
             );

@@ -47,6 +47,7 @@ readonly class JobFactory
         return $this->client->createJob(
             $jobCreationProperties->getLabel(),
             $jobCreationProperties->getEventNotifyUrl(),
+            $jobCreationProperties->getEventNotifyToken(),
             $jobCreationProperties->getMaximumDurationInSeconds(),
             $serializedSource,
         );
