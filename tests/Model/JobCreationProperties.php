@@ -40,6 +40,17 @@ class JobCreationProperties
         $this->sources = new ArrayCollection([]);
     }
 
+    /**
+     * @param non-empty-string $label
+     */
+    public function withLabel(string $label): self
+    {
+        $clone = clone $this;
+        $clone->label = $label;
+
+        return $clone;
+    }
+
     public function withSources(ProviderInterface $sources): self
     {
         $clone = clone $this;

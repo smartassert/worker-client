@@ -4,148 +4,53 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Tests\Integration;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use SmartAssert\WorkerClient\Model\Event;
 use SmartAssert\WorkerClient\Model\ResourceReference;
-use SmartAssert\WorkerClient\Tests\Services\WorkerEventFactory;
+use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
+use SmartAssert\WorkerClient\Tests\Services\JobFactory;
+use SmartAssert\WorkerClient\Tests\Services\JobSourceSerializerFactory;
+use SmartAssert\YamlFile\Collection\ArrayCollection;
+use SmartAssert\YamlFile\YamlFile;
 
-/**
- * @phpstan-type SerializedResourceReference array{
- *     label: non-empty-string,
- *     reference: non-empty-string
- * }
- * @phpstan-type SerializedEvent array{
- *     type: non-empty-string,
- *     state: non-empty-string,
- *     payload: array<mixed>
- * }
- */
 class GetEventTest extends AbstractIntegrationTestCase
 {
-    protected static WorkerEventFactory $workerEventFactory;
-
-    public static function setUpBeforeClass(): void
+    public function testGetEventSuccess(): void
     {
-        parent::setUpBeforeClass();
-
-        self::$workerEventFactory = new WorkerEventFactory(self::$dataRepository);
-    }
-
-    /**
-     * @phpstan-param SerializedResourceReference $eventReferenceData
-     * @phpstan-param SerializedResourceReference[] $relatedReferenceDataCollection
-     * @phpstan-param SerializedEvent $eventData
-     */
-    #[DataProvider('getEventDataProvider')]
-    public function testGetEventSuccess(
-        array $eventReferenceData,
-        array $relatedReferenceDataCollection,
-        array $eventData,
-        Event $expected,
-    ): void {
-        $referenceId = self::$workerEventFactory->createWorkerEventReference(
-            $eventReferenceData['label'],
-            $eventReferenceData['reference']
-        );
-
-        $relatedReferenceIds = [];
-        foreach ($relatedReferenceDataCollection as $relatedReferenceData) {
-            $relatedReferenceIds[] = self::$workerEventFactory->createWorkerEventReference(
-                $relatedReferenceData['label'],
-                $relatedReferenceData['reference']
-            );
-        }
-
-        $workerEventId = self::$workerEventFactory->createWorkerEvent(
-            $referenceId,
-            $eventData['type'],
-            $eventData['payload'],
-            $eventData['state'],
-            $relatedReferenceIds
-        );
-
-        $event = self::$client->getEvent($workerEventId);
-
-        self::assertEquals($expected, $event);
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public static function getEventDataProvider(): array
-    {
-        $jobLabel = md5((string) rand());
+        $jobLabel = 'job-label';
         $jobReference = md5($jobLabel);
 
-        return [
-            'job/started' => [
-                'eventReferenceData' => [
-                    'label' => $jobLabel,
-                    'reference' => $jobReference,
+        $jobCreationProperties = new JobCreationProperties(
+            ['test1.yml'],
+        )
+            ->withMaximumDurationInSeconds(60)
+            ->withSources(
+                new ArrayCollection([YamlFile::create('test1.yml', 'file content')]),
+            )
+            ->withLabel($jobLabel)
+        ;
+
+        $jobFactory = new JobFactory(self::$client, new JobSourceSerializerFactory());
+        $jobFactory->create($jobCreationProperties);
+
+        $event = self::$client->getEvent(1);
+
+        $expected = new Event(
+            1,
+            'job/started',
+            new ResourceReference($jobLabel, $jobReference),
+            [
+                'tests' => [
+                    'test1.yml',
                 ],
-                'relatedReferenceDataCollection' => [
-                    [
-                        'label' => 'Test/chrome-open-index.yml',
-                        'reference' => md5($jobLabel . 'Test/chrome-open-index.yml'),
-                    ],
-                    [
-                        'label' => 'Test/chrome-open-index-compilation-failure.yml',
-                        'reference' => md5(
-                            $jobLabel . 'Test/chrome-open-index-compilation-failure.yml'
-                        ),
-                    ],
-                ],
-                'eventData' => [
-                    'type' => 'job/started',
-                    'state' => 'awaiting',
-                    'payload' => [
-                        'tests' => [
-                            'Test/chrome-open-index.yml',
-                            'Test/chrome-open-index-compilation-failure.yml',
-                        ],
-                    ],
-                ],
-                'expected' => new Event(
-                    1,
-                    'job/started',
-                    new ResourceReference($jobLabel, $jobReference),
-                    [
-                        'tests' => [
-                            'Test/chrome-open-index.yml',
-                            'Test/chrome-open-index-compilation-failure.yml',
-                        ],
-                    ],
-                    [
-                        new ResourceReference(
-                            'Test/chrome-open-index.yml',
-                            md5($jobLabel . 'Test/chrome-open-index.yml')
-                        ),
-                        new ResourceReference(
-                            'Test/chrome-open-index-compilation-failure.yml',
-                            md5($jobLabel . 'Test/chrome-open-index-compilation-failure.yml')
-                        ),
-                    ],
+            ],
+            [
+                new ResourceReference(
+                    'test1.yml',
+                    md5($jobLabel . 'test1.yml')
                 ),
             ],
-            'job/compilation/started' => [
-                'eventReferenceData' => [
-                    'label' => $jobLabel,
-                    'reference' => $jobReference,
-                ],
-                'relatedReferenceDataCollection' => [],
-                'eventData' => [
-                    'type' => 'lifecycle/compilation-started',
-                    'state' => 'awaiting',
-                    'payload' => [],
-                ],
-                'expected' => new Event(
-                    1,
-                    'lifecycle/compilation-started',
-                    new ResourceReference($jobLabel, $jobReference),
-                    [],
-                    null,
-                ),
-            ],
-        ];
+        );
+
+        self::assertEquals($expected, $event);
     }
 }
