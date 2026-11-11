@@ -36,8 +36,8 @@ readonly class JobFactory
     public function create(JobCreationProperties $jobCreationProperties): Job
     {
         $jobSource = new JobSource(
-            new Manifest($jobCreationProperties->manifestPaths),
-            $jobCreationProperties->sources
+            new Manifest($jobCreationProperties->getManifestPaths()),
+            $jobCreationProperties->getSources()
         );
 
         $jobSourceSerializer = $this->jobSourceSerializerFactory->create();
@@ -45,9 +45,9 @@ readonly class JobFactory
         $serializedSource = $jobSourceSerializer->serialize($jobSource);
 
         return $this->client->createJob(
-            $jobCreationProperties->resultsJob->label,
-            $jobCreationProperties->resultsJob->authenticator,
-            $jobCreationProperties->maximumDurationInSeconds,
+            $jobCreationProperties->getResultsJob()->label,
+            $jobCreationProperties->getResultsJob()->authenticator,
+            $jobCreationProperties->getMaximumDurationInSeconds(),
             $serializedSource,
         );
     }

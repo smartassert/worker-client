@@ -109,22 +109,23 @@ class GetJobTest extends AbstractIntegrationTestCase
             'no tests' => [
                 'jobCreationPropertiesCreator' => function (ResultsJob $resultsJob) {
                     return new JobCreationProperties(
-                        resultsJob: $resultsJob,
-                        manifestPaths: ['test1.yml', 'test2.yml'],
-                        sources: new ArrayCollection([
+                        $resultsJob,
+                        ['test1.yml', 'test2.yml'],
+                    )->withSources(
+                        new ArrayCollection([
                             YamlFile::create('test1.yml', 'test 1 content'),
                             YamlFile::create('test2.yml', 'test 2 content'),
-                        ])
+                        ]),
                     );
                 },
                 'tests' => [],
                 'expectedJobCreator' => function (JobCreationProperties $jobCreationProperties) {
-                    $resultsJob = $jobCreationProperties->resultsJob;
+                    $resultsJob = $jobCreationProperties->getResultsJob();
 
                     return new Job(
                         new ResourceReference($resultsJob->label, md5($resultsJob->label)),
-                        $jobCreationProperties->maximumDurationInSeconds,
-                        $jobCreationProperties->manifestPaths,
+                        $jobCreationProperties->getMaximumDurationInSeconds(),
+                        $jobCreationProperties->getManifestPaths(),
                         ['test1.yml', 'test2.yml'],
                         [],
                         [
@@ -144,24 +145,25 @@ class GetJobTest extends AbstractIntegrationTestCase
             'has tests' => [
                 'jobCreationPropertiesCreator' => function (ResultsJob $resultsJob) {
                     return new JobCreationProperties(
-                        resultsJob: $resultsJob,
-                        manifestPaths: ['test1.yml', 'test2.yml', 'test3.yml'],
-                        sources: new ArrayCollection([
+                        $resultsJob,
+                        ['test1.yml', 'test2.yml', 'test3.yml'],
+                    )->withSources(
+                        new ArrayCollection([
                             YamlFile::create('test1.yml', 'test 1 content'),
                             YamlFile::create('test2.yml', 'test 2 content'),
                             YamlFile::create('test3.yml', 'test 3 content'),
                             YamlFile::create('page.yml', 'page content'),
-                        ])
+                        ]),
                     );
                 },
                 'tests' => $tests,
                 'expectedJobCreator' => function (JobCreationProperties $jobCreationProperties) use ($tests) {
-                    $resultsJob = $jobCreationProperties->resultsJob;
+                    $resultsJob = $jobCreationProperties->getResultsJob();
 
                     return new Job(
                         new ResourceReference($resultsJob->label, md5($resultsJob->label)),
-                        $jobCreationProperties->maximumDurationInSeconds,
-                        $jobCreationProperties->manifestPaths,
+                        $jobCreationProperties->getMaximumDurationInSeconds(),
+                        $jobCreationProperties->getManifestPaths(),
                         ['test1.yml', 'test2.yml', 'test3.yml', 'page.yml'],
                         $tests,
                         [

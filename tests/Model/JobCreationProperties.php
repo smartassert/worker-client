@@ -10,40 +10,72 @@ use SmartAssert\YamlFile\Collection\ProviderInterface;
 
 class JobCreationProperties
 {
-    public readonly ResultsJob $resultsJob;
+    private ResultsJob $resultsJob;
 
     /**
      * @var positive-int
      */
-    public readonly int $maximumDurationInSeconds;
+    private int $maximumDurationInSeconds;
 
     /**
      * @var non-empty-string[]
      */
-    public readonly array $manifestPaths;
-    public readonly ProviderInterface $sources;
+    private array $manifestPaths;
+    private ProviderInterface $sources;
 
     /**
-     * @param positive-int       $maximumDurationInSeconds
      * @param non-empty-string[] $manifestPaths
      */
-    public function __construct(
-        ResultsJob $resultsJob,
-        ?int $maximumDurationInSeconds = null,
-        array $manifestPaths = [],
-        ?ProviderInterface $sources = null,
-    ) {
-        if (null === $maximumDurationInSeconds) {
-            $maximumDurationInSeconds = rand(1, 600);
-        }
-
-        if (null === $sources) {
-            $sources = new ArrayCollection([]);
-        }
-
+    public function __construct(ResultsJob $resultsJob, array $manifestPaths)
+    {
         $this->resultsJob = $resultsJob;
-        $this->maximumDurationInSeconds = $maximumDurationInSeconds;
+        $this->maximumDurationInSeconds = rand(1, 600);
         $this->manifestPaths = $manifestPaths;
-        $this->sources = $sources;
+        $this->sources = new ArrayCollection([]);
+    }
+
+    public function withSources(ProviderInterface $sources): self
+    {
+        $clone = clone $this;
+        $clone->sources = $sources;
+
+        return $clone;
+    }
+
+    /**
+     * @param positive-int $maximumDurationInSeconds
+     */
+    public function withMaximumDurationInSeconds(int $maximumDurationInSeconds): self
+    {
+        $clone = clone $this;
+        $clone->maximumDurationInSeconds = $maximumDurationInSeconds;
+
+        return $clone;
+    }
+
+    public function getResultsJob(): ResultsJob
+    {
+        return $this->resultsJob;
+    }
+
+    /**
+     * @return positive-int
+     */
+    public function getMaximumDurationInSeconds(): int
+    {
+        return $this->maximumDurationInSeconds;
+    }
+
+    public function getSources(): ProviderInterface
+    {
+        return $this->sources;
+    }
+
+    /**
+     * @return non-empty-string[]
+     */
+    public function getManifestPaths(): array
+    {
+        return $this->manifestPaths;
     }
 }
