@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Tests\Model;
 
-use SmartAssert\ResultsClient\Model\Job as ResultsJob;
 use SmartAssert\YamlFile\Collection\ArrayCollection;
 use SmartAssert\YamlFile\Collection\ProviderInterface;
 
 class JobCreationProperties
 {
-    private ResultsJob $resultsJob;
+    /**
+     * @var non-empty-string
+     */
+    private string $label;
+    private string $eventNotifyUrl;
 
     /**
      * @var positive-int
@@ -26,9 +29,10 @@ class JobCreationProperties
     /**
      * @param non-empty-string[] $manifestPaths
      */
-    public function __construct(ResultsJob $resultsJob, array $manifestPaths)
+    public function __construct(array $manifestPaths)
     {
-        $this->resultsJob = $resultsJob;
+        $this->label = md5((string) rand());
+        $this->eventNotifyUrl = 'https://example.com/' . md5((string) rand()) . '/event-notify';
         $this->maximumDurationInSeconds = rand(1, 600);
         $this->manifestPaths = $manifestPaths;
         $this->sources = new ArrayCollection([]);
@@ -53,9 +57,17 @@ class JobCreationProperties
         return $clone;
     }
 
-    public function getResultsJob(): ResultsJob
+    /**
+     * @return non-empty-string
+     */
+    public function getLabel(): string
     {
-        return $this->resultsJob;
+        return $this->label;
+    }
+
+    public function getEventNotifyUrl(): string
+    {
+        return $this->eventNotifyUrl;
     }
 
     /**

@@ -30,30 +30,6 @@ services:
       - ./http-config/caddy/index.php:/app/public/index.php
       - ./http-config/caddy/Caddyfile:/etc/caddy/Caddyfile
 
-  results-service:
-    image: ghcr.io/smartassert/results:6.0
-    container_name: results-service
-    environment:
-      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/results?serverVersion=12&charset=utf8
-      AUTHENTICATION_BASE_URL: http://users-http
-      IS_READY: 1
-      SELF_URL: http://results-http
-    depends_on:
-      - postgres
-      - users-http
-
-  results-http:
-    image: caddy:2.4.5-alpine
-    container_name: results-http
-    restart: unless-stopped
-    ports:
-      - "9081:80"
-    links:
-      - results-service:app
-    volumes:
-      - ./http-config/caddy/index.php:/app/public/index.php
-      - ./http-config/caddy/Caddyfile:/etc/caddy/Caddyfile
-
   worker-service:
     image: ghcr.io/smartassert/worker:16.0
     container_name: worker-service
