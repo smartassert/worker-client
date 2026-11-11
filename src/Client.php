@@ -111,25 +111,22 @@ readonly class Client
         string $label,
         string $eventNotifyUrl,
         string $eventNotifyToken,
+        string $stateNotifyUrl,
+        string $stateNotifyToken,
         int $maximumDurationInSeconds,
         string $serializedJobSource,
-        ?string $stateNotifyUrl = null,
     ): Job {
         try {
-            $payloadData = [
-                'label' => $label,
-                'event_notify_url' => $eventNotifyUrl,
-                'event_notify_token' => $eventNotifyToken,
-                'maximum_duration_in_seconds' => $maximumDurationInSeconds,
-                'source' => $serializedJobSource,
-            ];
-
-            if (is_string($stateNotifyUrl)) {
-                $payloadData['state_notify_url'] = $stateNotifyUrl;
-            }
-
             $request = new Request('POST', $this->createUrl('/job'))
-                ->withPayload(new UrlEncodedPayload($payloadData))
+                ->withPayload(new UrlEncodedPayload([
+                    'label' => $label,
+                    'event_notify_url' => $eventNotifyUrl,
+                    'event_notify_token' => $eventNotifyToken,
+                    'state_notify_url' => $stateNotifyUrl,
+                    'state_notify_token' => $stateNotifyToken,
+                    'maximum_duration_in_seconds' => $maximumDurationInSeconds,
+                    'source' => $serializedJobSource,
+                ]))
             ;
 
             $response = $this->serviceClient->sendRequestForJson($request);

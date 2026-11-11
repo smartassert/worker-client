@@ -17,6 +17,12 @@ class JobCreationProperties
     private string $eventNotifyToken;
 
     /**
+     * @var non-empty-string
+     */
+    private string $stateNotifyUrl;
+    private string $stateNotifyToken;
+
+    /**
      * @var positive-int
      */
     private int $maximumDurationInSeconds;
@@ -35,6 +41,8 @@ class JobCreationProperties
         $this->label = md5((string) rand());
         $this->eventNotifyUrl = 'https://example.com/' . md5((string) rand()) . '/event-notify';
         $this->eventNotifyToken = md5((string) rand());
+        $this->stateNotifyUrl = 'https://example.com/' . md5((string) rand()) . '/state-notify';
+        $this->stateNotifyToken = md5((string) rand());
         $this->maximumDurationInSeconds = rand(1, 600);
         $this->manifestPaths = $manifestPaths;
         $this->sources = new ArrayCollection([]);
@@ -86,6 +94,19 @@ class JobCreationProperties
     public function getEventNotifyToken(): string
     {
         return $this->eventNotifyToken;
+    }
+
+    /**
+     * @return non-empty-string
+     */
+    public function getStateNotifyUrl(): string
+    {
+        return $this->stateNotifyUrl;
+    }
+
+    public function getStateNotifyToken(): string
+    {
+        return $this->stateNotifyToken;
     }
 
     /**

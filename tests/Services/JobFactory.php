@@ -48,6 +48,8 @@ readonly class JobFactory
             $jobCreationProperties->getLabel(),
             $jobCreationProperties->getEventNotifyUrl(),
             $jobCreationProperties->getEventNotifyToken(),
+            $jobCreationProperties->getStateNotifyUrl(),
+            $jobCreationProperties->getStateNotifyToken(),
             $jobCreationProperties->getMaximumDurationInSeconds(),
             $serializedSource,
         );
