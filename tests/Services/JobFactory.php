@@ -17,10 +17,11 @@ use SmartAssert\WorkerJobSource\Model\JobSource;
 use SmartAssert\WorkerJobSource\Model\Manifest;
 use SmartAssert\YamlFile\Exception\Collection\SerializeException;
 
-class JobFactory
+readonly class JobFactory
 {
     public function __construct(
-        private readonly Client $client,
+        private Client $client,
+        private JobSourceSerializerFactory $jobSourceSerializerFactory,
     ) {}
 
     /**
@@ -39,7 +40,7 @@ class JobFactory
             $jobCreationProperties->sources
         );
 
-        $jobSourceSerializer = (new JobSourceSerializerFactory())->create();
+        $jobSourceSerializer = $this->jobSourceSerializerFactory->create();
 
         $serializedSource = $jobSourceSerializer->serialize($jobSource);
 
