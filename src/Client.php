@@ -109,7 +109,8 @@ readonly class Client
      */
     public function createJob(
         string $label,
-        string $eventAddUrl,
+        string $eventNotifyUrl,
+        string $eventNotifyToken,
         int $maximumDurationInSeconds,
         string $serializedJobSource,
         ?string $stateNotifyUrl = null,
@@ -117,7 +118,8 @@ readonly class Client
         try {
             $payloadData = [
                 'label' => $label,
-                'event_add_url' => $eventAddUrl,
+                'event_notify_url' => $eventNotifyUrl,
+                'event_notify_token' => $eventNotifyToken,
                 'maximum_duration_in_seconds' => $maximumDurationInSeconds,
                 'source' => $serializedJobSource,
             ];

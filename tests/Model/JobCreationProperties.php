@@ -14,6 +14,7 @@ class JobCreationProperties
      */
     private string $label;
     private string $eventNotifyUrl;
+    private string $eventNotifyToken;
 
     /**
      * @var positive-int
@@ -33,6 +34,7 @@ class JobCreationProperties
     {
         $this->label = md5((string) rand());
         $this->eventNotifyUrl = 'https://example.com/' . md5((string) rand()) . '/event-notify';
+        $this->eventNotifyToken = md5((string) rand());
         $this->maximumDurationInSeconds = rand(1, 600);
         $this->manifestPaths = $manifestPaths;
         $this->sources = new ArrayCollection([]);
@@ -68,6 +70,11 @@ class JobCreationProperties
     public function getEventNotifyUrl(): string
     {
         return $this->eventNotifyUrl;
+    }
+
+    public function getEventNotifyToken(): string
+    {
+        return $this->eventNotifyToken;
     }
 
     /**
