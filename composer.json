@@ -39,10 +39,6 @@
             "@users-generate-jwt-keys",
             "@users-create-user"
         ],
-        "results-setup": [
-            "docker compose -f tests/build/docker-compose.yml exec -T results-service php bin/console doctrine:database:create --if-not-exists",
-            "docker compose -f tests/build/docker-compose.yml exec -T results-service php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration"
-        ],
         "integration-up": "docker compose -f tests/build/docker-compose.yml  up -d",
         "integration-status": "docker compose -f tests/build/docker-compose.yml ps",
         "integration-logs": "docker compose -f tests/build/docker-compose.yml logs",
@@ -50,8 +46,7 @@
             "@integration-up",
             "sleep 2",
             "@worker-setup",
-            "@users-setup",
-            "@results-setup"
+            "@users-setup"
         ],
         "integration-teardown": [
             "docker compose -f ./tests/build/docker-compose.yml down"
@@ -85,7 +80,6 @@
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
         "phpunit/phpunit": "^12",
-        "smartassert/results-client": "^13.0 || ^15.0",
         "smartassert/test-authenticaton-provider-bundle": "^6.0",
         "smartassert/worker-job-source": "^7.0 || ^8.0",
         "squizlabs/php_codesniffer": "^4.0",

@@ -45,8 +45,8 @@ readonly class JobFactory
         $serializedSource = $jobSourceSerializer->serialize($jobSource);
 
         return $this->client->createJob(
-            $jobCreationProperties->getResultsJob()->label,
-            $jobCreationProperties->getResultsJob()->authenticator,
+            $jobCreationProperties->getLabel(),
+            $jobCreationProperties->getEventNotifyUrl(),
             $jobCreationProperties->getMaximumDurationInSeconds(),
             $serializedSource,
         );

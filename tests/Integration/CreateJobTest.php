@@ -5,24 +5,18 @@ declare(strict_types=1);
 namespace SmartAssert\WorkerClient\Tests\Integration;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use SmartAssert\ResultsClient\Model\Job as ResultsJob;
 use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\JobCreationException;
 use SmartAssert\WorkerClient\Model\ResourceReference;
 use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
-use SmartAssert\WorkerClient\Tests\Services\ApiTokenFactory;
 use SmartAssert\WorkerClient\Tests\Services\JobFactory;
 use SmartAssert\WorkerClient\Tests\Services\JobSourceSerializerFactory;
-use SmartAssert\WorkerClient\Tests\Services\ResultsClientFactory;
-use SmartAssert\WorkerClient\Tests\Services\ServiceClientFactory;
 use SmartAssert\YamlFile\Collection\ArrayCollection;
 use SmartAssert\YamlFile\YamlFile;
-use Symfony\Component\Uid\Ulid;
 
 class CreateJobTest extends AbstractIntegrationTestCase
 {
     private static JobFactory $jobFactory;
-    private static ResultsJob $resultsJob;
 
     public static function setUpBeforeClass(): void
     {
@@ -32,18 +26,11 @@ class CreateJobTest extends AbstractIntegrationTestCase
             self::$client,
             new JobSourceSerializerFactory(),
         );
-
-        $serviceClient = new ServiceClientFactory()->create();
-        $resultsClient = new ResultsClientFactory($serviceClient)->create();
-        $apiTokenFactory = new ApiTokenFactory();
-
-        self::$resultsJob = $resultsClient->createJob($apiTokenFactory->create(), (string) new Ulid());
     }
 
     public function testCreateJobSourceTestMissing(): void
     {
         $jobCreationProperties = new JobCreationProperties(
-            self::$resultsJob,
             ['test1.yml', 'test2.yml'],
         )->withSources(
             new ArrayCollection([YamlFile::create('/test1.yml', 'file content')])
@@ -62,7 +49,6 @@ class CreateJobTest extends AbstractIntegrationTestCase
     public function testCreateJobJobAlreadyExists(): void
     {
         $jobCreationProperties = new JobCreationProperties(
-            self::$resultsJob,
             ['test1.yml'],
         )->withSources(
             new ArrayCollection([YamlFile::create('/test1.yml', 'file content')])
@@ -80,15 +66,15 @@ class CreateJobTest extends AbstractIntegrationTestCase
     }
 
     /**
-     * @param callable(ResultsJob): JobCreationProperties $jobCreationPropertiesCreator
-     * @param callable(JobCreationProperties): Job        $expectedJobCreator
+     * @param callable(): JobCreationProperties    $jobCreationPropertiesCreator
+     * @param callable(JobCreationProperties): Job $expectedJobCreator
      */
     #[DataProvider('createJobSuccessDataProvider')]
     public function testCreateJobSuccess(
         callable $jobCreationPropertiesCreator,
         callable $expectedJobCreator,
     ): void {
-        $jobCreationProperties = $jobCreationPropertiesCreator(self::$resultsJob);
+        $jobCreationProperties = $jobCreationPropertiesCreator();
 
         $expectedJob = $expectedJobCreator($jobCreationProperties);
 
@@ -102,9 +88,8 @@ class CreateJobTest extends AbstractIntegrationTestCase
     {
         return [
             'single test, no additional sources' => [
-                'jobCreationPropertiesCreator' => function (ResultsJob $resultsJob) {
+                'jobCreationPropertiesCreator' => function () {
                     return new JobCreationProperties(
-                        $resultsJob,
                         ['test1.yml'],
                     )->withMaximumDurationInSeconds(
                         60
@@ -115,10 +100,10 @@ class CreateJobTest extends AbstractIntegrationTestCase
                     ;
                 },
                 'expectedJobCreator' => function (JobCreationProperties $jobCreationProperties) {
-                    $resultsJob = $jobCreationProperties->getResultsJob();
+                    $label = $jobCreationProperties->getLabel();
 
                     return new Job(
-                        new ResourceReference($resultsJob->label, md5($resultsJob->label)),
+                        new ResourceReference($label, md5($label)),
                         $jobCreationProperties->getMaximumDurationInSeconds(),
                         $jobCreationProperties->getManifestPaths(),
                         ['test1.yml'],
@@ -126,7 +111,7 @@ class CreateJobTest extends AbstractIntegrationTestCase
                         [
                             new ResourceReference(
                                 'test1.yml',
-                                md5($resultsJob->label . 'test1.yml')
+                                md5($label . 'test1.yml')
                             ),
                         ],
                         [1, 2]
@@ -134,9 +119,8 @@ class CreateJobTest extends AbstractIntegrationTestCase
                 },
             ],
             'multiple tests, has additional sources' => [
-                'jobCreationPropertiesCreator' => function (ResultsJob $resultsJob) {
+                'jobCreationPropertiesCreator' => function () {
                     return new JobCreationProperties(
-                        $resultsJob,
                         ['test1.yml', 'test2.yml', 'test3.yml'],
                     )->withMaximumDurationInSeconds(
                         60
@@ -152,10 +136,10 @@ class CreateJobTest extends AbstractIntegrationTestCase
                     ;
                 },
                 'expectedJobCreator' => function (JobCreationProperties $jobCreationProperties) {
-                    $resultsJob = $jobCreationProperties->getResultsJob();
+                    $label = $jobCreationProperties->getLabel();
 
                     return new Job(
-                        new ResourceReference($resultsJob->label, md5($resultsJob->label)),
+                        new ResourceReference($label, md5($label)),
                         $jobCreationProperties->getMaximumDurationInSeconds(),
                         $jobCreationProperties->getManifestPaths(),
                         ['test1.yml', 'test2.yml', 'test3.yml', 'page.yml'],
@@ -163,15 +147,15 @@ class CreateJobTest extends AbstractIntegrationTestCase
                         [
                             new ResourceReference(
                                 'test1.yml',
-                                md5($resultsJob->label . 'test1.yml')
+                                md5($label . 'test1.yml')
                             ),
                             new ResourceReference(
                                 'test2.yml',
-                                md5($resultsJob->label . 'test2.yml')
+                                md5($label . 'test2.yml')
                             ),
                             new ResourceReference(
                                 'test3.yml',
-                                md5($resultsJob->label . 'test3.yml')
+                                md5($label . 'test3.yml')
                             ),
                         ],
                         [1, 2]

@@ -5,26 +5,20 @@ declare(strict_types=1);
 namespace SmartAssert\WorkerClient\Tests\Integration;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use SmartAssert\ResultsClient\Model\Job as ResultsJob;
 use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\ResourceReference;
 use SmartAssert\WorkerClient\Model\Test;
 use SmartAssert\WorkerClient\Tests\Model\JobCreationProperties;
-use SmartAssert\WorkerClient\Tests\Services\ApiTokenFactory;
 use SmartAssert\WorkerClient\Tests\Services\JobFactory;
 use SmartAssert\WorkerClient\Tests\Services\JobSourceSerializerFactory;
-use SmartAssert\WorkerClient\Tests\Services\ResultsClientFactory;
-use SmartAssert\WorkerClient\Tests\Services\ServiceClientFactory;
 use SmartAssert\WorkerClient\Tests\Services\TestFactory;
 use SmartAssert\YamlFile\Collection\ArrayCollection;
 use SmartAssert\YamlFile\YamlFile;
-use Symfony\Component\Uid\Ulid;
 
 class GetJobTest extends AbstractIntegrationTestCase
 {
     private static JobFactory $jobFactory;
     private static TestFactory $testFactory;
-    private static ResultsJob $resultsJob;
 
     public static function setUpBeforeClass(): void
     {
@@ -35,12 +29,6 @@ class GetJobTest extends AbstractIntegrationTestCase
             new JobSourceSerializerFactory(),
         );
         self::$testFactory = new TestFactory(self::$dataRepository);
-
-        $serviceClient = new ServiceClientFactory()->create();
-        $resultsClient = new ResultsClientFactory($serviceClient)->create();
-        $apiTokenFactory = new ApiTokenFactory();
-
-        self::$resultsJob = $resultsClient->createJob($apiTokenFactory->create(), (string) new Ulid());
     }
 
     public function testGetJobJobNotFound(): void
@@ -49,9 +37,9 @@ class GetJobTest extends AbstractIntegrationTestCase
     }
 
     /**
-     * @param callable(ResultsJob): JobCreationProperties $jobCreationPropertiesCreator
-     * @param callable(JobCreationProperties): Job        $expectedJobCreator
-     * @param Test[]                                      $tests
+     * @param callable(): JobCreationProperties    $jobCreationPropertiesCreator
+     * @param callable(JobCreationProperties): Job $expectedJobCreator
+     * @param Test[]                               $tests
      */
     #[DataProvider('getJobSuccessDataProvider')]
     public function testGetJobSuccess(
@@ -59,7 +47,7 @@ class GetJobTest extends AbstractIntegrationTestCase
         array $tests,
         callable $expectedJobCreator,
     ): void {
-        $jobCreationProperties = $jobCreationPropertiesCreator(self::$resultsJob);
+        $jobCreationProperties = $jobCreationPropertiesCreator();
 
         self::$jobFactory->create($jobCreationProperties);
 
@@ -107,9 +95,8 @@ class GetJobTest extends AbstractIntegrationTestCase
 
         return [
             'no tests' => [
-                'jobCreationPropertiesCreator' => function (ResultsJob $resultsJob) {
+                'jobCreationPropertiesCreator' => function () {
                     return new JobCreationProperties(
-                        $resultsJob,
                         ['test1.yml', 'test2.yml'],
                     )->withSources(
                         new ArrayCollection([
@@ -120,10 +107,10 @@ class GetJobTest extends AbstractIntegrationTestCase
                 },
                 'tests' => [],
                 'expectedJobCreator' => function (JobCreationProperties $jobCreationProperties) {
-                    $resultsJob = $jobCreationProperties->getResultsJob();
+                    $label = $jobCreationProperties->getLabel();
 
                     return new Job(
-                        new ResourceReference($resultsJob->label, md5($resultsJob->label)),
+                        new ResourceReference($label, md5($label)),
                         $jobCreationProperties->getMaximumDurationInSeconds(),
                         $jobCreationProperties->getManifestPaths(),
                         ['test1.yml', 'test2.yml'],
@@ -131,11 +118,11 @@ class GetJobTest extends AbstractIntegrationTestCase
                         [
                             new ResourceReference(
                                 'test1.yml',
-                                md5($resultsJob->label . 'test1.yml')
+                                md5($label . 'test1.yml')
                             ),
                             new ResourceReference(
                                 'test2.yml',
-                                md5($resultsJob->label . 'test2.yml')
+                                md5($label . 'test2.yml')
                             ),
                         ],
                         [1, 2]
@@ -143,9 +130,8 @@ class GetJobTest extends AbstractIntegrationTestCase
                 },
             ],
             'has tests' => [
-                'jobCreationPropertiesCreator' => function (ResultsJob $resultsJob) {
+                'jobCreationPropertiesCreator' => function () {
                     return new JobCreationProperties(
-                        $resultsJob,
                         ['test1.yml', 'test2.yml', 'test3.yml'],
                     )->withSources(
                         new ArrayCollection([
@@ -158,10 +144,10 @@ class GetJobTest extends AbstractIntegrationTestCase
                 },
                 'tests' => $tests,
                 'expectedJobCreator' => function (JobCreationProperties $jobCreationProperties) use ($tests) {
-                    $resultsJob = $jobCreationProperties->getResultsJob();
+                    $label = $jobCreationProperties->getLabel();
 
                     return new Job(
-                        new ResourceReference($resultsJob->label, md5($resultsJob->label)),
+                        new ResourceReference($label, md5($label)),
                         $jobCreationProperties->getMaximumDurationInSeconds(),
                         $jobCreationProperties->getManifestPaths(),
                         ['test1.yml', 'test2.yml', 'test3.yml', 'page.yml'],
@@ -169,15 +155,15 @@ class GetJobTest extends AbstractIntegrationTestCase
                         [
                             new ResourceReference(
                                 'test1.yml',
-                                md5($resultsJob->label . 'test1.yml')
+                                md5($label . 'test1.yml')
                             ),
                             new ResourceReference(
                                 'test2.yml',
-                                md5($resultsJob->label . 'test2.yml')
+                                md5($label . 'test2.yml')
                             ),
                             new ResourceReference(
                                 'test3.yml',
-                                md5($resultsJob->label . 'test3.yml')
+                                md5($label . 'test3.yml')
                             ),
                         ],
                         [1, 2]
