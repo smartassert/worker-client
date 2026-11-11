@@ -46,7 +46,7 @@
             "@integration-up",
             "sleep 2",
             "@worker-setup",
-            "@users-setup",
+            "@users-setup"
         ],
         "integration-teardown": [
             "docker compose -f ./tests/build/docker-compose.yml down"
