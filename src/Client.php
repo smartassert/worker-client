@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace SmartAssert\WorkerClient;
 
 use Psr\Http\Client\ClientExceptionInterface;
-use SmartAssert\ArrayInspector\ArrayInspector;
 use SmartAssert\ServiceClient\Client as ServiceClient;
 use SmartAssert\ServiceClient\Exception\InvalidModelDataException;
 use SmartAssert\ServiceClient\Exception\InvalidResponseDataException;
@@ -60,9 +59,7 @@ readonly class Client
             new Request('GET', $this->createUrl('/application_state'))
         );
 
-        $responseDataInspector = new ArrayInspector($response->getData());
-
-        $applicationState = $this->applicationStateFactory->create($responseDataInspector);
+        $applicationState = $this->applicationStateFactory->create($response->getData());
         if (null === $applicationState) {
             throw InvalidModelDataException::fromJsonResponse(ApplicationState::class, $response);
         }
@@ -86,7 +83,7 @@ readonly class Client
             new Request('GET', $this->createUrl('/event/' . $id))
         );
 
-        $event = $this->eventFactory->create(new ArrayInspector($response->getData()));
+        $event = $this->eventFactory->create($response->getData());
         if (null === $event) {
             throw InvalidModelDataException::fromJsonResponse(Event::class, $response);
         }
@@ -138,9 +135,7 @@ readonly class Client
                     throw InvalidResponseTypeException::create($response, JsonResponse::class);
                 }
 
-                $jobCreationError = $this->jobCreationExceptionFactory->create(
-                    new ArrayInspector($response->getData())
-                );
+                $jobCreationError = $this->jobCreationExceptionFactory->create($response->getData());
                 if (null === $jobCreationError) {
                     throw InvalidModelDataException::fromJsonResponse(JobCreationException::class, $response);
                 }
@@ -151,7 +146,7 @@ readonly class Client
             throw $e;
         }
 
-        $job = $this->jobFactory->create(new ArrayInspector($response->getData()));
+        $job = $this->jobFactory->create($response->getData());
         if (null === $job) {
             throw InvalidModelDataException::fromJsonResponse(Job::class, $response);
         }
@@ -181,7 +176,7 @@ readonly class Client
             throw $e;
         }
 
-        $job = $this->jobFactory->create(new ArrayInspector($response->getData()));
+        $job = $this->jobFactory->create($response->getData());
         if (null === $job) {
             throw InvalidModelDataException::fromJsonResponse(Job::class, $response);
         }

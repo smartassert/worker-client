@@ -9,8 +9,13 @@ use SmartAssert\WorkerClient\Model\Test;
 
 class TestFactory
 {
-    public function create(ArrayInspector $data): ?Test
+    /**
+     * @param array<mixed> $data
+     */
+    public function create(array $data): ?Test
     {
+        $data = new ArrayInspector($data);
+
         $browser = $data->getNonEmptyString('browser');
         $url = $data->getNonEmptyString('url');
         $source = $data->getNonEmptyString('source');

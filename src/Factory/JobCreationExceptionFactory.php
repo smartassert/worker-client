@@ -9,8 +9,13 @@ use SmartAssert\WorkerClient\Model\JobCreationException;
 
 readonly class JobCreationExceptionFactory
 {
-    public function create(ArrayInspector $data): ?JobCreationException
+    /**
+     * @param array<mixed> $data
+     */
+    public function create(array $data): ?JobCreationException
     {
+        $data = new ArrayInspector($data);
+
         $errorState = $data->getNonEmptyString('error_state');
         $payload = $data->getArray('payload');
 

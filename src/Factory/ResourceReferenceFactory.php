@@ -9,8 +9,13 @@ use SmartAssert\WorkerClient\Model\ResourceReference;
 
 class ResourceReferenceFactory
 {
-    public function create(ArrayInspector $data): ?ResourceReference
+    /**
+     * @param array<mixed> $data
+     */
+    public function create(array $data): ?ResourceReference
     {
+        $data = new ArrayInspector($data);
+
         $label = $data->getNonEmptyString('label');
         $reference = $data->getNonEmptyString('reference');
 

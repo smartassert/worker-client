@@ -16,10 +16,15 @@ readonly class JobFactory
         private TestFactory $testFactory,
     ) {}
 
-    public function create(ArrayInspector $data): ?Job
+    /**
+     * @param array<mixed> $data
+     */
+    public function create(array $data): ?Job
     {
+        $dataInspector = new ArrayInspector($data);
+
         $reference = $this->resourceReferenceFactory->create($data);
-        $maximumDurationInSeconds = $data->getPositiveInteger('maximum_duration_in_seconds');
+        $maximumDurationInSeconds = $dataInspector->getPositiveInteger('maximum_duration_in_seconds');
 
         if (null === $reference || null === $maximumDurationInSeconds) {
             return null;
@@ -28,11 +33,11 @@ readonly class JobFactory
         return new Job(
             $reference,
             $maximumDurationInSeconds,
-            $data->getNonEmptyStringArray('test_paths'),
-            $data->getNonEmptyStringArray('sources'),
-            $this->createTests($data->getArray('tests')),
-            $this->createRelatedReferences($data->getArray('references')),
-            $data->getPositiveIntegerArray('event_ids'),
+            $dataInspector->getNonEmptyStringArray('test_paths'),
+            $dataInspector->getNonEmptyStringArray('sources'),
+            $this->createTests($dataInspector->getArray('tests')),
+            $this->createRelatedReferences($dataInspector->getArray('references')),
+            $dataInspector->getPositiveIntegerArray('event_ids'),
         );
     }
 
@@ -46,8 +51,7 @@ readonly class JobFactory
         $tests = [];
         foreach ($data as $testData) {
             if (is_array($testData)) {
-                $testDataInspector = new ArrayInspector($testData);
-                $test = $this->testFactory->create($testDataInspector);
+                $test = $this->testFactory->create($testData);
 
                 if ($test instanceof Test) {
                     $tests[] = $test;
@@ -68,9 +72,7 @@ readonly class JobFactory
         $relatedReferences = [];
         foreach ($data as $relatedReferenceData) {
             if (is_array($relatedReferenceData)) {
-                $relatedReferenceDataInspector = new ArrayInspector($relatedReferenceData);
-
-                $relatedReference = $this->resourceReferenceFactory->create($relatedReferenceDataInspector);
+                $relatedReference = $this->resourceReferenceFactory->create($relatedReferenceData);
                 if ($relatedReference instanceof ResourceReference) {
                     $relatedReferences[] = $relatedReference;
                 }

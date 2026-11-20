@@ -13,8 +13,13 @@ readonly class ApplicationStateFactory
         private ComponentStateFactory $componentStateFactory,
     ) {}
 
-    public function create(ArrayInspector $data): ?ApplicationState
+    /**
+     * @param array<mixed> $data
+     */
+    public function create(array $data): ?ApplicationState
     {
+        $data = new ArrayInspector($data);
+
         $applicationState = $this->componentStateFactory->create($data->getArray('application'));
         $compilationState = $this->componentStateFactory->create($data->getArray('compilation'));
         $executionState = $this->componentStateFactory->create($data->getArray('execution'));
