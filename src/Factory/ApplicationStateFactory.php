@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Factory;
 
+use SmartAssert\WorkerClient\DataExtractor\DataExtractor;
 use SmartAssert\WorkerClient\Model\ApplicationState;
 
 readonly class ApplicationStateFactory
@@ -17,22 +18,10 @@ readonly class ApplicationStateFactory
      */
     public function create(array $data): ?ApplicationState
     {
-        $applicationData = $data['application'] ?? [];
-        $applicationData = is_array($applicationData) ? $applicationData : [];
-
-        $compilationData = $data['compilation'] ?? [];
-        $compilationData = is_array($compilationData) ? $compilationData : [];
-
-        $executionData = $data['execution'] ?? [];
-        $executionData = is_array($executionData) ? $executionData : [];
-
-        $eventDeliveryData = $data['event_delivery'] ?? [];
-        $eventDeliveryData = is_array($eventDeliveryData) ? $eventDeliveryData : [];
-
-        $applicationState = $this->componentStateFactory->create($applicationData);
-        $compilationState = $this->componentStateFactory->create($compilationData);
-        $executionState = $this->componentStateFactory->create($executionData);
-        $eventDeliveryState = $this->componentStateFactory->create($eventDeliveryData);
+        $applicationState = $this->componentStateFactory->create(DataExtractor::getArray($data, 'application'));
+        $compilationState = $this->componentStateFactory->create(DataExtractor::getArray($data, 'compilation'));
+        $executionState = $this->componentStateFactory->create(DataExtractor::getArray($data, 'execution'));
+        $eventDeliveryState = $this->componentStateFactory->create(DataExtractor::getArray($data, 'event_delivery'));
 
         if (
             null === $applicationState
