@@ -39,4 +39,16 @@ class DataExtractor
 
         return is_string($value) && '' !== $value ? $value : null;
     }
+
+    /**
+     * @param array<mixed> $data
+     *
+     * @return null|positive-int
+     */
+    public static function getPositiveInteger(array $data, string $key): ?int
+    {
+        $value = $data[$key] ?? null;
+
+        return is_int($value) && $value > 0 ? $value : null;
+    }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Factory;
 
+use SmartAssert\WorkerClient\DataExtractor\DataExtractor;
 use SmartAssert\WorkerClient\Model\Event;
 use SmartAssert\WorkerClient\Model\ResourceReference;
 
@@ -18,19 +19,11 @@ readonly class EventFactory
      */
     public function create(array $data): ?Event
     {
-        $sequenceNumber = $data['sequence_number'] ?? null;
-        $sequenceNumber = is_int($sequenceNumber) && $sequenceNumber > 0 ? $sequenceNumber : null;
-
-        $type = $data['type'] ?? null;
-        $type = is_string($type) && '' !== $type ? $type : null;
-
+        $sequenceNumber = DataExtractor::getPositiveInteger($data, 'sequence_number');
+        $type = DataExtractor::getNonEmptyString($data, 'type');
         $resourceReference = $this->resourceReferenceFactory->create($data);
-
-        $relatedReferencesData = $data['related_references'] ?? [];
-        $relatedReferencesData = is_array($relatedReferencesData) ? $relatedReferencesData : [];
-
-        $body = $data['body'] ?? [];
-        $body = is_array($body) ? $body : [];
+        $relatedReferencesData = DataExtractor::getArray($data, 'related_references');
+        $body = DataExtractor::getArray($data, 'body');
 
         $references = [];
         foreach ($relatedReferencesData as $relatedReferenceData) {
