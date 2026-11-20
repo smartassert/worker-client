@@ -60,9 +60,7 @@ readonly class Client
             new Request('GET', $this->createUrl('/application_state'))
         );
 
-        $responseDataInspector = new ArrayInspector($response->getData());
-
-        $applicationState = $this->applicationStateFactory->create($responseDataInspector);
+        $applicationState = $this->applicationStateFactory->create($response->getData());
         if (null === $applicationState) {
             throw InvalidModelDataException::fromJsonResponse(ApplicationState::class, $response);
         }
