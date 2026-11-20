@@ -21,10 +21,10 @@ readonly class JobFactory
      */
     public function create(array $data): ?Job
     {
-        $data = new ArrayInspector($data);
+        $dataInspector = new ArrayInspector($data);
 
         $reference = $this->resourceReferenceFactory->create($data);
-        $maximumDurationInSeconds = $data->getPositiveInteger('maximum_duration_in_seconds');
+        $maximumDurationInSeconds = $dataInspector->getPositiveInteger('maximum_duration_in_seconds');
 
         if (null === $reference || null === $maximumDurationInSeconds) {
             return null;
@@ -33,11 +33,11 @@ readonly class JobFactory
         return new Job(
             $reference,
             $maximumDurationInSeconds,
-            $data->getNonEmptyStringArray('test_paths'),
-            $data->getNonEmptyStringArray('sources'),
-            $this->createTests($data->getArray('tests')),
-            $this->createRelatedReferences($data->getArray('references')),
-            $data->getPositiveIntegerArray('event_ids'),
+            $dataInspector->getNonEmptyStringArray('test_paths'),
+            $dataInspector->getNonEmptyStringArray('sources'),
+            $this->createTests($dataInspector->getArray('tests')),
+            $this->createRelatedReferences($dataInspector->getArray('references')),
+            $dataInspector->getPositiveIntegerArray('event_ids'),
         );
     }
 
@@ -73,9 +73,7 @@ readonly class JobFactory
         $relatedReferences = [];
         foreach ($data as $relatedReferenceData) {
             if (is_array($relatedReferenceData)) {
-                $relatedReferenceDataInspector = new ArrayInspector($relatedReferenceData);
-
-                $relatedReference = $this->resourceReferenceFactory->create($relatedReferenceDataInspector);
+                $relatedReference = $this->resourceReferenceFactory->create($relatedReferenceData);
                 if ($relatedReference instanceof ResourceReference) {
                     $relatedReferences[] = $relatedReference;
                 }

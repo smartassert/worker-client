@@ -19,18 +19,18 @@ readonly class EventFactory
      */
     public function create(array $data): ?Event
     {
-        $data = new ArrayInspector($data);
+        $dataInspector = new ArrayInspector($data);
 
-        $sequenceNumber = $data->getPositiveInteger('sequence_number');
-        $type = $data->getNonEmptyString('type');
+        $sequenceNumber = $dataInspector->getPositiveInteger('sequence_number');
+        $type = $dataInspector->getNonEmptyString('type');
         $resourceReference = $this->resourceReferenceFactory->create($data);
-        $relatedReferencesData = $data->getArray('related_references');
-        $body = $data->getArray('body');
+        $relatedReferencesData = $dataInspector->getArray('related_references');
+        $body = $dataInspector->getArray('body');
 
         $references = [];
         foreach ($relatedReferencesData as $relatedReferenceData) {
             if (is_array($relatedReferenceData)) {
-                $reference = $this->resourceReferenceFactory->create(new ArrayInspector($relatedReferenceData));
+                $reference = $this->resourceReferenceFactory->create($relatedReferenceData);
 
                 if ($reference instanceof ResourceReference) {
                     $references[] = $reference;
