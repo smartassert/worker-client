@@ -57,6 +57,7 @@ class GetJobTest extends AbstractIntegrationTestCase
 
         $expectedJob = $expectedJobCreator($jobCreationProperties);
         $job = self::$client->getJob();
+
         self::assertInstanceOf(Job::class, $job);
 
         self::assertEquals($expectedJob->reference, $job->reference);

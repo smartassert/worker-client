@@ -67,7 +67,7 @@
         "psr/http-client": "^1.0",
         "psr/http-factory": "^1.0",
         "psr/http-message": "^1.0",
-        "smartassert/array-inspector": ">=0.4,<1",
+        "smartassert/array-inspector": "^0.4.0",
         "smartassert/service-client": "^8",
         "smartassert/yaml-file": "^9.0"
     },

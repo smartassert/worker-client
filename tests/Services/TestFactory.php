@@ -56,7 +56,7 @@ class TestFactory
             'url' => $url,
             'source' => $source,
             'target' => $target,
-            'step_names' => implode(', ', $stepNames),
+            'step_names' => implode(',', $stepNames),
             'position' => $position,
             'state' => $state,
         ]);
