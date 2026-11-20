@@ -84,7 +84,7 @@ readonly class Client
             new Request('GET', $this->createUrl('/event/' . $id))
         );
 
-        $event = $this->eventFactory->create(new ArrayInspector($response->getData()));
+        $event = $this->eventFactory->create($response->getData());
         if (null === $event) {
             throw InvalidModelDataException::fromJsonResponse(Event::class, $response);
         }

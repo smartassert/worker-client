@@ -14,8 +14,13 @@ readonly class EventFactory
         private ResourceReferenceFactory $resourceReferenceFactory,
     ) {}
 
-    public function create(ArrayInspector $data): ?Event
+    /**
+     * @param array<mixed> $data
+     */
+    public function create(array $data): ?Event
     {
+        $data = new ArrayInspector($data);
+
         $sequenceNumber = $data->getPositiveInteger('sequence_number');
         $type = $data->getNonEmptyString('type');
         $resourceReference = $this->resourceReferenceFactory->create($data);
