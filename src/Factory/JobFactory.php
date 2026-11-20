@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Factory;
 
+use SmartAssert\WorkerClient\DataExtractor\DataExtractor;
 use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\ResourceReference;
 use SmartAssert\WorkerClient\Model\Test;
@@ -21,31 +22,22 @@ readonly class JobFactory
     public function create(array $data): ?Job
     {
         $reference = $this->resourceReferenceFactory->create($data);
-
-        $maximumDurationInSeconds = $data['maximum_duration_in_seconds'] ?? null;
-        $maximumDurationInSeconds = is_int($maximumDurationInSeconds) && 0 < $maximumDurationInSeconds
-            ? $maximumDurationInSeconds
-            : null;
-
+        $maximumDurationInSeconds = DataExtractor::getPositiveInteger($data, 'maximum_duration_in_seconds');
         if (null === $reference || null === $maximumDurationInSeconds) {
             return null;
         }
 
-        $testsData = $data['tests'] ?? [];
-
-        $referencesData = $data['references'] ?? [];
-        $referencesData = is_array($referencesData) ? $referencesData : [];
-
-        $testsData = is_array($testsData) ? $testsData : [];
+        $testsData = DataExtractor::getArray($data, 'tests');
+        $referencesData = DataExtractor::getArray($data, 'references');
 
         return new Job(
             $reference,
             $maximumDurationInSeconds,
-            $this->getNonEmptyStringArray($data, 'test_paths'),
-            $this->getNonEmptyStringArray($data, 'sources'),
+            DataExtractor::getNonEmptyStringArray($data, 'test_paths'),
+            DataExtractor::getNonEmptyStringArray($data, 'sources'),
             $this->createTests($testsData),
             $this->createRelatedReferences($referencesData),
-            $this->getPositiveIntegerArray($data, 'event_ids'),
+            DataExtractor::getPositiveIntegerArray($data, 'event_ids'),
         );
     }
 
@@ -88,47 +80,5 @@ readonly class JobFactory
         }
 
         return $relatedReferences;
-    }
-
-    /**
-     * @param array<mixed> $data
-     *
-     * @return non-empty-string[]
-     */
-    private function getNonEmptyStringArray(array $data, string $key): array
-    {
-        $values = $data[$key] ?? [];
-        $values = is_array($values) ? $values : [];
-
-        $filteredValues = [];
-
-        foreach ($values as $value) {
-            if (is_string($value) && '' !== $value) {
-                $filteredValues[] = $value;
-            }
-        }
-
-        return $filteredValues;
-    }
-
-    /**
-     * @param array<mixed> $data
-     *
-     * @return positive-int[]
-     */
-    private function getPositiveIntegerArray(array $data, string $key): array
-    {
-        $values = $data[$key] ?? [];
-        $values = is_array($values) ? $values : [];
-
-        $filteredValues = [];
-
-        foreach ($values as $value) {
-            if (is_int($value) && $value > 0) {
-                $filteredValues[] = $value;
-            }
-        }
-
-        return $filteredValues;
     }
 }

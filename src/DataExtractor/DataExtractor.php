@@ -51,4 +51,46 @@ class DataExtractor
 
         return is_int($value) && $value > 0 ? $value : null;
     }
+
+    /**
+     * @param array<mixed> $data
+     *
+     * @return non-empty-string[]
+     */
+    public static function getNonEmptyStringArray(array $data, string $key): array
+    {
+        $values = $data[$key] ?? [];
+        $values = is_array($values) ? $values : [];
+
+        $filteredValues = [];
+
+        foreach ($values as $value) {
+            if (is_string($value) && '' !== $value) {
+                $filteredValues[] = $value;
+            }
+        }
+
+        return $filteredValues;
+    }
+
+    /**
+     * @param array<mixed> $data
+     *
+     * @return positive-int[]
+     */
+    public static function getPositiveIntegerArray(array $data, string $key): array
+    {
+        $values = $data[$key] ?? [];
+        $values = is_array($values) ? $values : [];
+
+        $filteredValues = [];
+
+        foreach ($values as $value) {
+            if (is_int($value) && $value > 0) {
+                $filteredValues[] = $value;
+            }
+        }
+
+        return $filteredValues;
+    }
 }
