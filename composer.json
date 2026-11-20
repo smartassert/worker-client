@@ -73,7 +73,7 @@
     },
     "require-dev": {
         "ext-pdo": "*",
-        "friendsofphp/php-cs-fixer": "dev-master#32c1c3f8fb65051f27a2d295e9c467b7ebe9de11",
+        "friendsofphp/php-cs-fixer": "^3.95",
         "guzzlehttp/guzzle": "^7.10",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.1",
