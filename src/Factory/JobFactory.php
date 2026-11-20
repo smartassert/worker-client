@@ -16,8 +16,13 @@ readonly class JobFactory
         private TestFactory $testFactory,
     ) {}
 
-    public function create(ArrayInspector $data): ?Job
+    /**
+     * @param array<mixed> $data
+     */
+    public function create(array $data): ?Job
     {
+        $data = new ArrayInspector($data);
+
         $reference = $this->resourceReferenceFactory->create($data);
         $maximumDurationInSeconds = $data->getPositiveInteger('maximum_duration_in_seconds');
 

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace SmartAssert\WorkerClient;
 
 use Psr\Http\Client\ClientExceptionInterface;
-use SmartAssert\ArrayInspector\ArrayInspector;
 use SmartAssert\ServiceClient\Client as ServiceClient;
 use SmartAssert\ServiceClient\Exception\InvalidModelDataException;
 use SmartAssert\ServiceClient\Exception\InvalidResponseDataException;
@@ -147,7 +146,7 @@ readonly class Client
             throw $e;
         }
 
-        $job = $this->jobFactory->create(new ArrayInspector($response->getData()));
+        $job = $this->jobFactory->create($response->getData());
         if (null === $job) {
             throw InvalidModelDataException::fromJsonResponse(Job::class, $response);
         }
@@ -177,7 +176,7 @@ readonly class Client
             throw $e;
         }
 
-        $job = $this->jobFactory->create(new ArrayInspector($response->getData()));
+        $job = $this->jobFactory->create($response->getData());
         if (null === $job) {
             throw InvalidModelDataException::fromJsonResponse(Job::class, $response);
         }
