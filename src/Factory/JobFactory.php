@@ -51,8 +51,7 @@ readonly class JobFactory
         $tests = [];
         foreach ($data as $testData) {
             if (is_array($testData)) {
-                $testDataInspector = new ArrayInspector($testData);
-                $test = $this->testFactory->create($testDataInspector);
+                $test = $this->testFactory->create($testData);
 
                 if ($test instanceof Test) {
                     $tests[] = $test;
