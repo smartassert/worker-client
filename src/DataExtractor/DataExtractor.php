@@ -27,4 +27,16 @@ class DataExtractor
 
         return is_bool($value) ? $value : null;
     }
+
+    /**
+     * @param array<mixed> $data
+     *
+     * @return ?non-empty-string
+     */
+    public static function getNonEmptyString(array $data, string $key): ?string
+    {
+        $value = $data[$key] ?? null;
+
+        return is_string($value) && '' !== $value ? $value : null;
+    }
 }

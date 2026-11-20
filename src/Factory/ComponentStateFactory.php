@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Factory;
 
+use SmartAssert\WorkerClient\DataExtractor\DataExtractor;
 use SmartAssert\WorkerClient\Model\ComponentState;
 
 readonly class ComponentStateFactory
@@ -17,21 +18,11 @@ readonly class ComponentStateFactory
      */
     public function create(array $data): ?ComponentState
     {
-        $state = $data['state'] ?? null;
-        $state = is_string($state) ? $state : null;
-        $state = '' !== $state ? $state : null;
-        if (null === $state) {
-            return null;
-        }
-
-        $metaStateData = $data['meta_state'] ?? null;
-        $metaStateData = is_array($metaStateData) ? $metaStateData : null;
-        if (null === $metaStateData) {
-            return null;
-        }
+        $state = DataExtractor::getNonEmptyString($data, 'state');
+        $metaStateData = DataExtractor::getArray($data, 'meta_state');
 
         $metaState = $this->metaStateFactory->create($metaStateData);
-        if (null === $metaState) {
+        if (null === $state || null === $metaState) {
             return null;
         }
 
