@@ -136,9 +136,7 @@ readonly class Client
                     throw InvalidResponseTypeException::create($response, JsonResponse::class);
                 }
 
-                $jobCreationError = $this->jobCreationExceptionFactory->create(
-                    new ArrayInspector($response->getData())
-                );
+                $jobCreationError = $this->jobCreationExceptionFactory->create($response->getData());
                 if (null === $jobCreationError) {
                     throw InvalidModelDataException::fromJsonResponse(JobCreationException::class, $response);
                 }
