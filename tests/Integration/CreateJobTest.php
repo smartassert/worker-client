@@ -78,7 +78,21 @@ class CreateJobTest extends AbstractIntegrationTestCase
 
         $expectedJob = $expectedJobCreator($jobCreationProperties);
 
-        self::assertEquals($expectedJob, self::$jobFactory->create($jobCreationProperties));
+        $createdJob = self::$jobFactory->create($jobCreationProperties);
+
+        self::assertEquals($expectedJob->reference, $createdJob->reference);
+        self::assertSame($expectedJob->maximumDurationInSeconds, $createdJob->maximumDurationInSeconds);
+        self::assertSame($expectedJob->testPaths, $createdJob->testPaths);
+        self::assertSame($expectedJob->sources, $createdJob->sources);
+        self::assertSame($expectedJob->tests, $createdJob->tests);
+        self::assertEquals($expectedJob->relatedReferences, $createdJob->relatedReferences);
+
+        $expectedEventIds = $expectedJob->eventIds;
+        self::assertNotEmpty($expectedEventIds);
+
+        foreach ($expectedEventIds as $expectedEventId) {
+            self::assertContains($expectedEventId, $createdJob->eventIds);
+        }
     }
 
     /**
