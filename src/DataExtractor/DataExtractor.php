@@ -17,4 +17,14 @@ class DataExtractor
 
         return is_array($value) ? $value : [];
     }
+
+    /**
+     * @param array<mixed> $data
+     */
+    public static function getBool(array $data, string $key): ?bool
+    {
+        $value = $data[$key] ?? null;
+
+        return is_bool($value) ? $value : null;
+    }
 }
