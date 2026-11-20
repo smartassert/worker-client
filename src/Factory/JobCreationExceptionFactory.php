@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Factory;
 
-use SmartAssert\ArrayInspector\ArrayInspector;
+use SmartAssert\WorkerClient\DataExtractor\DataExtractor;
 use SmartAssert\WorkerClient\Model\JobCreationException;
 
 readonly class JobCreationExceptionFactory
@@ -14,10 +14,8 @@ readonly class JobCreationExceptionFactory
      */
     public function create(array $data): ?JobCreationException
     {
-        $data = new ArrayInspector($data);
-
-        $errorState = $data->getNonEmptyString('error_state');
-        $payload = $data->getArray('payload');
+        $errorState = DataExtractor::getNonEmptyString($data, 'error_state');
+        $payload = DataExtractor::getArray($data, 'payload');
 
         return null === $errorState ? null : new JobCreationException($errorState, $payload);
     }

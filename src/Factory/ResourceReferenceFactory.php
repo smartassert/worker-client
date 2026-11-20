@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Factory;
 
-use SmartAssert\ArrayInspector\ArrayInspector;
+use SmartAssert\WorkerClient\DataExtractor\DataExtractor;
 use SmartAssert\WorkerClient\Model\ResourceReference;
 
 class ResourceReferenceFactory
@@ -14,10 +14,8 @@ class ResourceReferenceFactory
      */
     public function create(array $data): ?ResourceReference
     {
-        $data = new ArrayInspector($data);
-
-        $label = $data->getNonEmptyString('label');
-        $reference = $data->getNonEmptyString('reference');
+        $label = DataExtractor::getNonEmptyString($data, 'label');
+        $reference = DataExtractor::getNonEmptyString($data, 'reference');
 
         return null === $label || null === $reference ? null : new ResourceReference($label, $reference);
     }

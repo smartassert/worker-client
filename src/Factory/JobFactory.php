@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Factory;
 
-use SmartAssert\ArrayInspector\ArrayInspector;
+use SmartAssert\WorkerClient\DataExtractor\DataExtractor;
 use SmartAssert\WorkerClient\Model\Job;
 use SmartAssert\WorkerClient\Model\ResourceReference;
 use SmartAssert\WorkerClient\Model\Test;
@@ -21,23 +21,23 @@ readonly class JobFactory
      */
     public function create(array $data): ?Job
     {
-        $dataInspector = new ArrayInspector($data);
-
         $reference = $this->resourceReferenceFactory->create($data);
-        $maximumDurationInSeconds = $dataInspector->getPositiveInteger('maximum_duration_in_seconds');
-
+        $maximumDurationInSeconds = DataExtractor::getPositiveInteger($data, 'maximum_duration_in_seconds');
         if (null === $reference || null === $maximumDurationInSeconds) {
             return null;
         }
 
+        $testsData = DataExtractor::getArray($data, 'tests');
+        $referencesData = DataExtractor::getArray($data, 'references');
+
         return new Job(
             $reference,
             $maximumDurationInSeconds,
-            $dataInspector->getNonEmptyStringArray('test_paths'),
-            $dataInspector->getNonEmptyStringArray('sources'),
-            $this->createTests($dataInspector->getArray('tests')),
-            $this->createRelatedReferences($dataInspector->getArray('references')),
-            $dataInspector->getPositiveIntegerArray('event_ids'),
+            DataExtractor::getNonEmptyStringArray($data, 'test_paths'),
+            DataExtractor::getNonEmptyStringArray($data, 'sources'),
+            $this->createTests($testsData),
+            $this->createRelatedReferences($referencesData),
+            DataExtractor::getPositiveIntegerArray($data, 'event_ids'),
         );
     }
 

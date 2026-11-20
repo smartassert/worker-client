@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Factory;
 
-use SmartAssert\ArrayInspector\ArrayInspector;
+use SmartAssert\WorkerClient\DataExtractor\DataExtractor;
 use SmartAssert\WorkerClient\Model\Test;
 
 class TestFactory
@@ -14,15 +14,17 @@ class TestFactory
      */
     public function create(array $data): ?Test
     {
-        $data = new ArrayInspector($data);
+        $browser = DataExtractor::getNonEmptyString($data, 'browser');
+        $url = DataExtractor::getNonEmptyString($data, 'url');
+        $source = DataExtractor::getNonEmptyString($data, 'source');
+        $target = DataExtractor::getNonEmptyString($data, 'target');
+        $stepNames = DataExtractor::getNonEmptyStringArray($data, 'step_names');
 
-        $browser = $data->getNonEmptyString('browser');
-        $url = $data->getNonEmptyString('url');
-        $source = $data->getNonEmptyString('source');
-        $target = $data->getNonEmptyString('target');
-        $stepNames = $data->getNonEmptyStringArray('step_names');
-        $state = $data->getNonEmptyString('state');
-        $position = $data->getPositiveInteger('position');
+        $state = $data['state'] ?? null;
+        $state = is_string($state) && '' !== $state ? $state : null;
+
+        $position = $data['position'] ?? null;
+        $position = is_int($position) && $position > 0 ? $position : null;
 
         if (
             null === $browser

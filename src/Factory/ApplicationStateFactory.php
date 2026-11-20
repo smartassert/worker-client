@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SmartAssert\WorkerClient\Factory;
 
-use SmartAssert\ArrayInspector\ArrayInspector;
+use SmartAssert\WorkerClient\DataExtractor\DataExtractor;
 use SmartAssert\WorkerClient\Model\ApplicationState;
 
 readonly class ApplicationStateFactory
@@ -18,12 +18,10 @@ readonly class ApplicationStateFactory
      */
     public function create(array $data): ?ApplicationState
     {
-        $data = new ArrayInspector($data);
-
-        $applicationState = $this->componentStateFactory->create($data->getArray('application'));
-        $compilationState = $this->componentStateFactory->create($data->getArray('compilation'));
-        $executionState = $this->componentStateFactory->create($data->getArray('execution'));
-        $eventDeliveryState = $this->componentStateFactory->create($data->getArray('event_delivery'));
+        $applicationState = $this->componentStateFactory->create(DataExtractor::getArray($data, 'application'));
+        $compilationState = $this->componentStateFactory->create(DataExtractor::getArray($data, 'compilation'));
+        $executionState = $this->componentStateFactory->create(DataExtractor::getArray($data, 'execution'));
+        $eventDeliveryState = $this->componentStateFactory->create(DataExtractor::getArray($data, 'event_delivery'));
 
         if (
             null === $applicationState
