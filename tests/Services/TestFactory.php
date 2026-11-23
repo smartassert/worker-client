@@ -56,7 +56,7 @@ class TestFactory
             'url' => $url,
             'source' => $source,
             'target' => $target,
-            'step_names' => implode(',', $stepNames),
+            'step_names' => json_encode($stepNames),
             'position' => $position,
             'state' => $state,
         ]);
